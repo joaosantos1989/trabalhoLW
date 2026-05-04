@@ -39,7 +39,7 @@
                     } else if (tipoContaId == 2) {
                         session.setAttribute("user", "Funcionario");
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efectuado com sucesso!</h1>");
-                        response.setHeader("Refresh", "1; URL=pagina_func.jsp");
+                        response.setHeader("Refresh", "1; URL=pagina_funcionario.jsp");
 
                     } else if (tipoContaId == 3) {
                         session.setAttribute("user", "Cliente");

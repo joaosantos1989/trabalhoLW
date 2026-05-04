@@ -1,4 +1,149 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
+
+<div class="container mt-4">
+    <!-- botões de controlo de admin -->
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+        <a href="pagina_admin.jsp?secao=produtos" class="btn btn-primary shadow-sm">📦 Produtos</a>
+        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-primary shadow-sm">👥 Utilizadores</a>
+        <a href="pagina_admin.jsp?secao=alertas" class="btn btn-primary shadow-sm">🚨 Alertas</a>
+        <a href="pagina_admin.jsp?secao=registos" class="btn btn-primary shadow-sm">📜 Registos</a>
+    </div>
+
+    <!-- logica dos controlos -->
+    <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
+        <%
+            String secao = request.getParameter("secao"); //listar_utilizadores/editar_utilizadores/aprovar_utilizador
+            String acao = request.getParameter("acao"); //remover//adicionar/editar
+            String userId = request.getParameter("id"); //id do utilizador recebido nos gets
+
+            // --- Ações ---
+            if (conn != null) {
+                // remover utilizador da bd
+                if ("remover".equals(acao) && userId != null) {
+                    PreparedStatement clear = conn.prepareStatement("DELETE FROM UTILIZADOR WHERE id_utilizador = ?");
+                    clear.setInt(1, Integer.parseInt(userId));
+                    clear.executeUpdate();
+                    out.println("<div class='alert alert-danger'>Utilizador removido!</div>");
+                    response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
+                }
+
+                // aprovar_utilizador
+                if ("aprovar_utilizador".equals(secao) && userId != null) {
+                    PreparedStatement aprove = conn.prepareStatement("UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?");
+                    aprove.setInt(1, Integer.parseInt(userId));
+                    aprove.executeUpdate();
+                    out.println("<div class='alert alert-success'>Utilizador aprovado!</div>");
+                    response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
+                }
+
+                // editar
+                if (request.getParameter("editar") != null) {
+                    String idUpd = request.getParameter("id_update");
+                    String nomeUpd = request.getParameter("novo_nome");
+                    int tipoUpd = Integer.parseInt(request.getParameter("novo_tipo"));
+
+                    PreparedStatement statement = conn.prepareStatement("UPDATE UTILIZADOR SET username=?, tipoContaId=? WHERE id_utilizador=?");
+                    statement.setString(1, nomeUpd);
+                    statement.setInt(2, tipoUpd);
+                    statement.setInt(3, Integer.parseInt(idUpd));
+                    statement.executeUpdate();
+                    out.println("<div class='alert alert-success'>Dados atualizados!</div>");
+                    response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
+                }
+            }
+
+            // --- Interface ---
+
+                // secao utilizadores, apresenta a tabela com os utilizadores da db
+            if ("utilizadores".equals(secao) || secao == null) {
+            %>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-primary">Gestão de Utilizadores</h2>
+                <a href="registo.jsp" class="btn btn-success">Novo Utilizador</a>
+            </div>
+            <table class="table table-hover border">
+                <thead class="table-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    Statement statement = conn.createStatement();
+                    ResultSet result = statement.executeQuery("SELECT * FROM UTILIZADOR");
+                    while (result.next()) {
+                        int tipoContaId = result.getInt("tipoContaId");
+                        String tipoUser = "";
+
+                        if (tipoContaId == 1) {
+                            tipoUser = "Admin";
+                        } else if (tipoContaId == 2) {
+                            tipoUser = "Funcionario";
+                        } else {
+                            tipoUser = "Cliente";
+                        }
+                        int validation = result.getInt("validation");
+                        int idUser = result.getInt("id_utilizador");
+                %>
+                <tr>
+                    <td><%= result.getString("username") %></td>
+                    <td><span class="badge bg-secondary"><%= tipoUser %></span></td>
+                    <td>
+                        <!-- se ja esta validado, pode ser editado -->
+                        <% if (validation == 1) { %>
+                        <a href="pagina_admin.jsp?secao=editar_utilizadores&id=<%= idUser %>" class="btn btn-sm btn-outline-primary">✏️</a>
+                        <% } else { %>
+                        <!-- se não esta validado -->
+                        <a href="pagina_admin.jsp?secao=aprovar_utilizador&id=<%= idUser %>" class="btn btn-sm btn-warning">✔️ Aprovar</a>
+                        <% } %>
+                        <!-- remover utilizador da bd -->
+                        <a href="pagina_admin.jsp?secao=utilizadores&acao=remover&id=<%= idUser %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apagar utilizador?')">🗑️</a>
+                    </td>
+                </tr>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+            <%
+            }
+            // secao editar_utilizadores
+            else if ("editar_utilizadores".equals(secao)) {
+                    PreparedStatement statement = conn.prepareStatement("SELECT * FROM UTILIZADOR WHERE id_utilizador = ?");
+                    statement.setInt(1, Integer.parseInt(userId));
+                    ResultSet result = statement.executeQuery();
+                    if(result.next()) {
+            %>
+            <h2 class="text-primary mb-4">Editar Utilizador</h2>
+            <form action="pagina_admin.jsp?secao=utilizadores" method="POST" class="col-md-6">
+                <!-- guarda o id do utilizador a ser alterado -->
+                <input type="hidden" name="id_update" value="<%= result.getInt("id_utilizador") %>">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nome de Utilizador</label>
+                    <input type="text" name="novo_nome" class="form-control" value="<%= result.getString("username") %>" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Conta</label>
+                    <select name="novo_tipo" class="form-select">
+                        <option value="1" <%= result.getInt("tipoContaId") == 1 ? "selected" : "" %>>Administrador</option>
+                        <option value="2" <%= result.getInt("tipoContaId") == 2 ? "selected" : "" %>>Funcionário</option>
+                        <option value="3" <%= result.getInt("tipoContaId") == 3 ? "selected" : "" %>>Cliente</option>
+                    </select>
+                </div>
+                <button type="submit" name="editar" class="btn btn-primary">Gravar Alterações</button>
+                <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-light border">Cancelar</a>
+            </form>
+            <%
+                    }
+                } else {
+                    out.println("<h3 class='text-muted'>A secção '" + secao + "' está em desenvolvimento.</h3>");
+                }
+            %>
+        </div>
+    </div>
+
 <%@ include file="footer.jsp" %>
