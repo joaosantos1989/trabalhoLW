@@ -12,10 +12,10 @@
     </div>
 
     <!-- logica dos controlos -->
-    <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
+    <div id="secao_dashboard" class="bg-white p-4 rounded shadow-sm border">
         <%
-            String secao = request.getParameter("secao"); //listar_utilizadores/editar_utilizadores/aprovar_utilizador
-            String acao = request.getParameter("acao"); //remover//adicionar/editar
+            String secao = request.getParameter("secao"); //utilizadores/editar_utilizadores/aprovar_utilizador
+            String acao = request.getParameter("acao"); //remover
             String userId = request.getParameter("id"); //id do utilizador recebido nos gets
 
             // --- Ações ---
@@ -38,7 +38,7 @@
                     response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
                 }
 
-                // editar
+                // editar, recebe os dados do formulario
                 if (request.getParameter("editar") != null) {
                     String idUpd = request.getParameter("id_update");
                     String nomeUpd = request.getParameter("novo_nome");
@@ -56,7 +56,7 @@
 
             // --- Interface ---
 
-                // secao utilizadores, apresenta a tabela com os utilizadores da db
+            // secao utilizadores, apresenta a tabela com os utilizadores da bd
             if ("utilizadores".equals(secao) || secao == null) {
             %>
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,7 +72,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%
+                <% //vamos buscar o tipo de utilizador, se esta validado e o id
                     Statement statement = conn.createStatement();
                     ResultSet result = statement.executeQuery("SELECT * FROM UTILIZADOR");
                     while (result.next()) {
@@ -89,8 +89,9 @@
                         int validation = result.getInt("validation");
                         int idUser = result.getInt("id_utilizador");
                 %>
-                <tr>
+                <tr> <!-- apresentamos o nome do utilizador na coluna nome -->
                     <td><%= result.getString("username") %></td>
+                    <!-- badge = etiqueta arredondada, apresenta o tipo de utilizador na coluna tipo -->
                     <td><span class="badge bg-secondary"><%= tipoUser %></span></td>
                     <td>
                         <!-- se ja esta validado, pode ser editado -->
@@ -105,23 +106,23 @@
                     </td>
                 </tr>
                 <%
-                    }
+                                        } //fim do while
                 %>
                 </tbody>
             </table>
             <%
-            }
+                                                                } //fim de secao utilizadores
             // secao editar_utilizadores
             else if ("editar_utilizadores".equals(secao)) {
                     PreparedStatement statement = conn.prepareStatement("SELECT * FROM UTILIZADOR WHERE id_utilizador = ?");
-                    statement.setInt(1, Integer.parseInt(userId));
+                    statement.setInt(1, Integer.parseInt(userId)); //id de utilizador recebido do botão de editar da tabela
                     ResultSet result = statement.executeQuery();
                     if(result.next()) {
             %>
             <h2 class="text-primary mb-4">Editar Utilizador</h2>
             <form action="pagina_admin.jsp?secao=utilizadores" method="POST" class="col-md-6">
                 <!-- guarda o id do utilizador a ser alterado -->
-                <input type="hidden" name="id_update" value="<%= result.getInt("id_utilizador") %>">
+                <input type="hidden" name="id_update" value="<%= userId %>">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Nome de Utilizador</label>
                     <input type="text" name="novo_nome" class="form-control" value="<%= result.getString("username") %>" required>
@@ -129,11 +130,13 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold">Tipo de Conta</label>
                     <select name="novo_tipo" class="form-select">
+                        <!-- apresenta o tipo de utilizador atual como primeira opção da lista -->
                         <option value="1" <%= result.getInt("tipoContaId") == 1 ? "selected" : "" %>>Administrador</option>
                         <option value="2" <%= result.getInt("tipoContaId") == 2 ? "selected" : "" %>>Funcionário</option>
                         <option value="3" <%= result.getInt("tipoContaId") == 3 ? "selected" : "" %>>Cliente</option>
                     </select>
                 </div>
+                <!-- envia os dados do formulario -->
                 <button type="submit" name="editar" class="btn btn-primary">Gravar Alterações</button>
                 <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-light border">Cancelar</a>
             </form>
