@@ -1,15 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
-<div class="container mt-4">
-    <div class="alert alert-success text-center">
-        <strong>📍 Localização:</strong> EST Castelo Branco |
-        <strong>📞 Contacto:</strong> 272 339 300 |
-        <strong>⏰ Horário:</strong> 08h - 20h
-    </div>
-</div>
-
-<!-- Apresentação de informações/promoções -->
+<!-- Apresentação de promoções -->
 <section class="py-2">
     <div class="container mt-3">
         <div class="card bg-danger text-white shadow-sm border-0">
@@ -114,5 +106,14 @@
         </div>
     </div>
 </section>
+
+<!-- Apresentação de informações -->
+<div class="container mt-4">
+    <div class="alert alert-success text-center">
+        <strong>📍 Localização:</strong> EST Castelo Branco |
+        <strong>📞 Contacto:</strong> 272 339 300 |
+        <strong>⏰ Horário:</strong> 08h - 20h
+    </div>
+</div>
 
 <%@ include file="footer.jsp" %>

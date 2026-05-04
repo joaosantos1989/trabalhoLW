@@ -36,7 +36,7 @@
             </ul>
             <form class="d-flex">
                 <button class="btn btn-outline-success" type="button">
-                    <i class="bi-cart-fill me-1"></i> Carro
+                    <i class="bi-cart-fill me-1"></i> Carrinho
                     <span class="badge bg-success text-white ms-1 rounded-pill">0</span>
                 </button>
             </form>
