@@ -22,7 +22,8 @@
             if (conn != null) {
                 // remover utilizador da bd
                 if ("remover".equals(acao) && userId != null) {
-                    PreparedStatement clear = conn.prepareStatement("DELETE FROM UTILIZADOR WHERE id_utilizador = ?");
+                    String sql = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
+                    PreparedStatement clear = conn.prepareStatement(sql);
                     clear.setInt(1, Integer.parseInt(userId));
                     clear.executeUpdate();
                     out.println("<div class='alert alert-danger'>Utilizador removido!</div>");
@@ -31,7 +32,8 @@
 
                 // aprovar_utilizador
                 if ("aprovar_utilizador".equals(secao) && userId != null) {
-                    PreparedStatement aprove = conn.prepareStatement("UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?");
+                    String sql = "UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?";
+                    PreparedStatement aprove = conn.prepareStatement(sql);
                     aprove.setInt(1, Integer.parseInt(userId));
                     aprove.executeUpdate();
                     out.println("<div class='alert alert-success'>Utilizador aprovado!</div>");
@@ -44,7 +46,8 @@
                     String nomeUpd = request.getParameter("novo_nome");
                     int tipoUpd = Integer.parseInt(request.getParameter("novo_tipo"));
 
-                    PreparedStatement statement = conn.prepareStatement("UPDATE UTILIZADOR SET username=?, tipoContaId=? WHERE id_utilizador=?");
+                    String sql = "UPDATE UTILIZADOR SET username=?, tipoContaId=? WHERE id_utilizador=?";
+                    PreparedStatement statement = conn.prepareStatement(sql);
                     statement.setString(1, nomeUpd);
                     statement.setInt(2, tipoUpd);
                     statement.setInt(3, Integer.parseInt(idUpd));
@@ -74,7 +77,8 @@
                 <tbody>
                 <% //vamos buscar o tipo de utilizador, se esta validado e o id
                     Statement statement = conn.createStatement();
-                    ResultSet result = statement.executeQuery("SELECT * FROM UTILIZADOR");
+                    String sql = "SELECT * FROM UTILIZADOR";
+                    ResultSet result = statement.executeQuery(sql);
                     while (result.next()) {
                         int tipoContaId = result.getInt("tipoContaId");
                         String tipoUser = "";
@@ -114,10 +118,11 @@
                                                                 } //fim de secao utilizadores
             // secao editar_utilizadores
             else if ("editar_utilizadores".equals(secao)) {
-                    PreparedStatement statement = conn.prepareStatement("SELECT * FROM UTILIZADOR WHERE id_utilizador = ?");
-                    statement.setInt(1, Integer.parseInt(userId)); //id de utilizador recebido do botão de editar da tabela
-                    ResultSet result = statement.executeQuery();
-                    if(result.next()) {
+                String sql = "SELECT * FROM UTILIZADOR WHERE id_utilizador = ?";
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setInt(1, Integer.parseInt(userId)); //id de utilizador recebido do botão de editar da tabela
+                ResultSet result = statement.executeQuery();
+                if(result.next()) {
             %>
             <h2 class="text-primary mb-4">Editar Utilizador</h2>
             <form action="pagina_admin.jsp?secao=utilizadores" method="POST" class="col-md-6">

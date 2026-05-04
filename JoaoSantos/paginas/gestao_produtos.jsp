@@ -1,0 +1,1 @@
+<!-- urgente Gestão de produtos, Criar: 0.5; Alterar:0.5; Anular: 0.5; Consulta: 0,25; Filtros e ordenação: 1,0   -->
