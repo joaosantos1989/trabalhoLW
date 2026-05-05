@@ -6,13 +6,12 @@
     <div class="container mt-3">
         <div class="card bg-danger text-white shadow-sm border-0">
             <% //procura as promoções na bd
-                try {
-                    if (conn != null) {
-                        String sql = "SELECT * FROM PROMOCAO WHERE ESTADO = '1'";
-                        PreparedStatement statement = conn.prepareStatement(sql);
-                        ResultSet result = statement.executeQuery();
+                if (conn != null) {
+                    String sql = "SELECT * FROM PROMOCAO WHERE ESTADO = '1'";
+                    PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet result = statement.executeQuery();
 
-                        while(result.next()) {
+                    while(result.next()) {
             %>
             <!-- cartões das promoções -->
             <div class="card-body text-center py-4">
@@ -23,12 +22,9 @@
                 </p>
             </div>
             <%
-                        }
-                        result.close();
-                        statement.close();
                     }
-                } catch (Exception e) {
-                    out.println("<div class='alert alert-danger'>Erro: " + e.getMessage() + "</div>");
+                    result.close();
+                    statement.close();
                 }
             %>
         </div>
@@ -44,7 +40,7 @@
             <h2 class="fw-bold text-success mb-0">Os Nossos Produtos</h2>
             <div class="small">
                 <span class="fw-bold me-2">Ordenar por:</span>
-                <!-- envia o valor da variavel ordem por get -->
+                <!-- envia o valor da variavel(ordem) por get -->
                 <a href="pagina_principal.jsp?ordem=nome" class="btn btn-sm btn-outline-success">Nome</a>
                 <a href="pagina_principal.jsp?ordem=barato" class="btn btn-sm btn-outline-success">Mais Barato</a>
                 <a href="pagina_principal.jsp?ordem=caro" class="btn btn-sm btn-outline-success">Mais Caro</a>
@@ -54,28 +50,27 @@
         <div class="row gx-4 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
             <%
-                try {
-                    if (conn != null) {
-                        // recebe a variavel(ordem) com o tipo de ordenação escolhido
-                        String ordem = request.getParameter("ordem");
+                if (conn != null) {
+                    // recebe a variavel(ordem) com o tipo de ordenação escolhido
+                    String ordem = request.getParameter("ordem");
 
-                        String sql = "SELECT * FROM PRODUTO ORDER BY nome ASC";
+                    String sql = "SELECT * FROM PRODUTO ORDER BY nome ASC";
 
-                        // Muda a SQL se o utilizador clicou num link
-                        if (ordem != null) {
-                            if (ordem.equals("barato")) {
-                                sql = "SELECT * FROM PRODUTO ORDER BY preco ASC";
-                            } else if (ordem.equals("caro")) {
-                                sql = "SELECT * FROM PRODUTO ORDER BY preco DESC";
-                            } else if (ordem.equals("nome")) {
-                                sql = "SELECT * FROM PRODUTO ORDER BY nome ASC";
-                            }
+                    // tipo de query para cada tipo de ordenação
+                    if (ordem != null) {
+                        if (ordem.equals("barato")) {
+                            sql = "SELECT * FROM PRODUTO ORDER BY preco ASC"; //mais barato
+                        } else if (ordem.equals("caro")) {
+                            sql = "SELECT * FROM PRODUTO ORDER BY preco DESC"; //mais caro
+                        } else if (ordem.equals("nome")) {
+                            sql = "SELECT * FROM PRODUTO ORDER BY nome ASC"; //ordem alfabetica
                         }
+                    }
 
-                        PreparedStatement statement = conn.prepareStatement(sql);
-                        ResultSet result = statement.executeQuery();
+                    PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet result = statement.executeQuery();
 
-                        while(result.next()) {
+                    while(result.next()) {
             %>
             <!-- cartões com os produtos disponiveis -->
             <div class="col mb-5">
@@ -94,12 +89,9 @@
                 </div>
             </div>
             <%
-                        }
-                        result.close();
-                        statement.close();
                     }
-                } catch (Exception e) {
-                    out.println("<div class='alert alert-danger'>Erro: " + e.getMessage() + "</div>");
+                    result.close();
+                    statement.close();
                 }
             %>
 

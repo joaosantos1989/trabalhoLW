@@ -22,7 +22,7 @@
         <%@ include file="admin_utilizadores.jsp" %>
         <%
         } else if ("produtos".equals(secao)) {
-            out.println("<h2>Gestão de Produtos (Em breve)</h2>");
+            out.println("<h2>Gestão de Produtos (Em construção)</h2>");
         } else {
         %>
         <%@ include file="admin_utilizadores.jsp" %>

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 
-<!-- logica dos controlos -->
+<!-- logica dos botões de controlo -->
 <div class="bg-white p-4 rounded shadow-sm border">
     <%
         secao = request.getParameter("secao"); //utilizadores/editar_utilizadores/aprovar_utilizador
@@ -138,7 +138,7 @@
     <%
             }
         } else {
-            out.println("<h3 class='text-muted'>A secção '" + secao + "' está em desenvolvimento.</h3>");
+            out.println("<h2>" + secao + "' (Em construção).</h2>");
         }
     %>
     </div>

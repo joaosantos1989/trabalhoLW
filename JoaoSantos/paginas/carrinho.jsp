@@ -28,22 +28,22 @@
                         "AND e.id_utilizador = u.id_utilizador " +
                         "AND u.username = ? AND e.estado = 0";
 
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, nomeUser);
-                ResultSet rs = ps.executeQuery();
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, nomeUser);
+                ResultSet result = statement.executeQuery();
 
                 // Se não houver produtos, a tabela ficará vazia
-                while (rs.next()) {
-                    idDaEncomenda = rs.getInt("id_encomenda");
-                    double preco = rs.getDouble("preco_unitario");
+                while (result.next()) {
+                    idDaEncomenda = result.getInt("id_encomenda");
+                    double preco = result.getDouble("preco_unitario");
                     totalACalcular += preco;
         %>
         <tr>
-            <td><%= rs.getString("nome") %></td>
+            <td><%= result.getString("nome") %></td>
             <td><%= preco %>€</td>
             <td class="text-center">
                 <%-- Link para remover apenas este item --%>
-                <a href="remover_item.jsp?id_item=<%= rs.getInt("id_item") %>" class="btn btn-sm btn-outline-danger">Remover</a>
+                <a href="remover_item.jsp?id_item=<%= result.getInt("id_item") %>" class="btn btn-sm btn-outline-danger">Remover</a>
             </td>
         </tr>
         <%
@@ -60,10 +60,10 @@
         <div class="col-md-6 text-end">
             <% if (totalACalcular > 0) { %>
             <h4>Total a pagar: <span class="text-success"><%= totalACalcular %>€</span></h4>
-            <%-- Este botão envia o ID da encomenda para a tua página de pagamento --%>
+            <%-- envia o ID da encomenda para a página de pagamento --%>
             <a href="finalizar_pagamento.jsp?id_enc=<%= idDaEncomenda %>" class="btn btn-success btn-lg shadow-sm">Pagar Agora</a>
             <% } else { %>
-            <p class="text-muted">O seu carrinho está vazio.</p>
+            <p class="text-muted">O carrinho está vazio.</p>
             <% } %>
         </div>
     </div>
