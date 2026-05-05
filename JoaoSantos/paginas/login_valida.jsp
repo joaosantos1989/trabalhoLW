@@ -34,17 +34,17 @@
                     if (tipoContaId == 1) {
                         session.setAttribute("user", "Admin");
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efetuado com sucesso!</h1>");
-                        response.setHeader("Refresh", "1; URL=pagina_admin.jsp");
+                        response.setHeader("Refresh", "1; URL=pagina_principal.jsp");
 
                     } else if (tipoContaId == 2) {
                         session.setAttribute("user", "Funcionario");
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efectuado com sucesso!</h1>");
-                        response.setHeader("Refresh", "1; URL=pagina_funcionario.jsp");
+                        response.setHeader("Refresh", "1; URL=pagina_principal.jsp");
 
                     } else if (tipoContaId == 3) {
                         session.setAttribute("user", "Cliente");
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efectuado com sucesso!</h1>");
-                        response.setHeader("Refresh", "1; URL=pagina_cliente.jsp");
+                        response.setHeader("Refresh", "1; URL=pagina_principal.jsp");
                     }
                 }
                 // validation == 2 significa que a conta está por aprovar

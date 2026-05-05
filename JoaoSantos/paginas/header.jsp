@@ -2,6 +2,34 @@
 <%@ page import="java.sql.*" %>
 <%@ include file="../basedados/basedados.h" %>
 
+<%
+    // Lógica para o contador do carrinho
+    int totalItens = 0;
+    if (session.getAttribute("autenticado") != null) {
+        String userLogado = (String) session.getAttribute("utilizador");
+        try {
+            if (conn != null) {
+                // Query para somar a quantidade de itens no carrinho (estado 0)
+                String sql = "SELECT SUM(i.quantidade) FROM ITEM_ENCOMENDA i " +
+                        "JOIN ENCOMENDA e ON i.id_encomenda = e.id_encomenda " +
+                        "JOIN UTILIZADOR u ON e.id_utilizador = u.id_utilizador " +
+                        "WHERE u.username = ? AND e.estado = 0";
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, userLogado);
+                ResultSet result = statement.executeQuery();
+
+                if (result.next()) {
+                    totalItens = result.getInt(1);
+                }
+                result.close();
+                statement.close();
+            }
+        } catch (Exception e) {
+            // Em caso de erro, o contador permanece a 0
+        }
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -58,6 +86,15 @@
                     }
                 %>
             </ul>
+        </div>
+        <!-- Carinho de compras -->
+
+        <div class="d-flex">
+            <a href="carrinho.jsp" class="btn btn-outline-success">
+                <i class="bi-cart-fill me-1"></i>
+                Carrinho
+                <span class="badge bg-success text-white ms-1 rounded-pill"><%= totalItens %></span>
+            </a>
         </div>
     </div>
 </nav>

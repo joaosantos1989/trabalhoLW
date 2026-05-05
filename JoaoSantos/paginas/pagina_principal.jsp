@@ -80,7 +80,7 @@
             <!-- cartões com os produtos disponiveis -->
             <div class="col mb-5">
                 <div class="card h-100 shadow-sm border-0 bg-light">
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/e9ecef/198754&text=Produto" alt="Imagem" />
+                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="Imagem" />
                     <div class="card-body p-4 text-center">
                         <h5 class="fw-bolder"><%= result.getString("nome") %></h5>
                         <p class="small text-muted text-truncate"><%= result.getString("descricao") %></p>
@@ -88,7 +88,7 @@
                     </div>
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                         <div class="text-center">
-                            <a class="btn btn-success w-100 mt-auto" href="#">Adicionar</a>
+                            <a class="btn btn-success mt-auto" href="adicionar_carrinho.jsp?id=<%= result.getInt("id_produto") %>">Adicionar</a>
                         </div>
                     </div>
                 </div>
