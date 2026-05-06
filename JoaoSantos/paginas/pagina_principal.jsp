@@ -1,6 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
+<% if ("1".equals(request.getParameter("adicionado"))) { %>
+<div class="container mt-2">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ Produto adicionado ao carrinho!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
 <!-- Apresentação de promoções -->
 <section class="py-2">
     <div class="container mt-3">

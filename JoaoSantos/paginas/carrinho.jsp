@@ -20,16 +20,15 @@
             int idDaEncomenda = 0;
 
             if (conn != null && nomeUser != null) {
-                // SQL para buscar os produtos da encomenda que ainda não foi paga (estado 0)
+                // procuramos os produtos da encomenda que ainda não foram pagos(estado 0)
                 String sql = "SELECT i.id_item, i.preco_unitario, p.nome, e.id_encomenda " +
                         "FROM ITEM_ENCOMENDA i, ENCOMENDA e, PRODUTO p, UTILIZADOR u " +
                         "WHERE i.id_encomenda = e.id_encomenda " +
                         "AND i.id_produto = p.id_produto " +
                         "AND e.id_utilizador = u.id_utilizador " +
-                        "AND u.username = ? AND e.estado = 0";
+                        "AND e.estado = 0";
 
                 PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1, nomeUser);
                 ResultSet result = statement.executeQuery();
 
                 // Se não houver produtos, a tabela ficará vazia
