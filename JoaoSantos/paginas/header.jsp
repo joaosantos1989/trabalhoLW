@@ -51,10 +51,7 @@
                 } else {
                     // se estiver logado, vamos buscar o tipo
                     int tipo = (int) session.getAttribute("TipoConta");//convertemos para int porque para o Java ainda é um objeto
-                %>
-                <li class="nav-item"><a class="nav-link " href="logout.jsp">Sair</a></li>
 
-                <%
                     //paginas principais de cada tipo de utilizador
                     if (tipo == 1) { // ADMINISTRADOR
                 %>
@@ -75,10 +72,12 @@
                 </li>
                 <%
                         }
-                    }
-                %>
+                    %>
+                <li class="nav-item"><a class="nav-link " href="logout.jsp">Sair</a></li>
+
             </ul>
         </div>
+
         <!-- Carinho de compras -->
         <div class="d-flex">
             <a href="carrinho.jsp" class="btn btn-outline-success">
@@ -87,6 +86,9 @@
                 <span class="badge bg-success text-white ms-1 rounded-pill"><%= totalItens %></span>
             </a>
         </div>
+        <%
+            }
+        %>
     </div>
 </nav>
 

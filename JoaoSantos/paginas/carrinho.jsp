@@ -20,15 +20,18 @@
             int idDaEncomenda = 0;
 
             if (conn != null && nomeUser != null) {
-                // procuramos os produtos da encomenda que ainda não foram pagos(estado 0)
+                // procuramos os produtos da encomenda que ainda não foram pagos(estado 0) do utilizador
                 String sql = "SELECT i.id_item, i.preco_unitario, p.nome, e.id_encomenda " +
                         "FROM ITEM_ENCOMENDA i, ENCOMENDA e, PRODUTO p, UTILIZADOR u " +
                         "WHERE i.id_encomenda = e.id_encomenda " +
                         "AND i.id_produto = p.id_produto " +
                         "AND e.id_utilizador = u.id_utilizador " +
-                        "AND e.estado = 0";
+                        "AND e.estado = 0 " +
+                        "AND u.username = ?";
+
 
                 PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, nomeUser);
                 ResultSet result = statement.executeQuery();
 
                 // Se não houver produtos, a tabela ficará vazia
@@ -60,7 +63,7 @@
             <% if (totalACalcular > 0) { %>
             <h4>Total a pagar: <span class="text-success"><%= totalACalcular %>€</span></h4>
             <%-- envia o ID da encomenda para a página de pagamento --%>
-            <a href="finalizar_pagamento.jsp?id_enc=<%= idDaEncomenda %>" class="btn btn-success btn-lg shadow-sm">Pagar Agora</a>
+            <a href="enviar_encomenda.jsp?id_enc=<%= idDaEncomenda %>" class="btn btn-success btn-lg shadow-sm">Encomendar</a>
             <% } else { %>
             <p class="text-muted">O carrinho está vazio.</p>
             <% } %>

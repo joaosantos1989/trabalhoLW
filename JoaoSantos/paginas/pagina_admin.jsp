@@ -6,6 +6,7 @@
     <!-- botões de controlo de admin -->
     <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
         <a href="pagina_admin.jsp?secao=produtos" class="btn btn-primary shadow-sm">📦 Produtos</a>
+        <a href="gestao_encomendas.jsp" class="btn btn-primary shadow-sm">📋 Encomendas</a>
         <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-primary shadow-sm">👥 Utilizadores</a>
         <a href="pagina_admin.jsp?secao=alertas" class="btn btn-primary shadow-sm">🚨 Alertas</a>
         <a href="pagina_admin.jsp?secao=registos" class="btn btn-primary shadow-sm">📜 Registos</a>

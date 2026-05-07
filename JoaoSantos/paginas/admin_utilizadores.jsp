@@ -29,22 +29,6 @@
                 out.println("<div class='alert alert-success'>Utilizador aprovado!</div>");
                 response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
             }
-
-            // editar, recebe os dados do formulario
-            if (request.getParameter("editar") != null) {
-                String idUpd = request.getParameter("id_update");
-                String nomeUpd = request.getParameter("novo_nome");
-                int tipoUpd = Integer.parseInt(request.getParameter("novo_tipo"));
-
-                String sql = "UPDATE UTILIZADOR SET username=?, tipoContaId=? WHERE id_utilizador=?";
-                PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1, nomeUpd);
-                statement.setInt(2, tipoUpd);
-                statement.setInt(3, Integer.parseInt(idUpd));
-                statement.executeUpdate();
-                out.println("<div class='alert alert-success'>Dados atualizados!</div>");
-                response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
-            }
         }
 
         // --- Interface ---
@@ -105,41 +89,20 @@
         </tbody>
     </table>
     <%
-    } //fim de secao utilizadores
+        //fim de secao utilizadores
     // secao editar_utilizadores
-    else if ("editar_utilizadores".equals(secao)) {
-        String sql = "SELECT * FROM UTILIZADOR WHERE id_utilizador = ?";
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setInt(1, Integer.parseInt(userId)); //id de utilizador recebido do botão de editar da tabela
-        ResultSet result = statement.executeQuery();
-        if(result.next()) {
+        } else if ("editar_utilizadores".equals(secao)) {
     %>
-    <h2 class="text-primary mb-4">Editar Utilizador</h2>
-    <form action="pagina_admin.jsp?secao=utilizadores" method="POST" class="col-md-6">
-        <!-- guarda o id do utilizador a ser alterado -->
-        <input type="hidden" name="id_update" value="<%= userId %>">
-        <div class="mb-3">
-            <label class="form-label fw-bold">Nome de Utilizador</label>
-            <input type="text" name="novo_nome" class="form-control" value="<%= result.getString("username") %>" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">Tipo de Conta</label>
-            <select name="novo_tipo" class="form-select">
-                <!-- apresenta o tipo de utilizador atual como primeira opção da lista -->
-                <option value="1" <%= result.getInt("tipoContaId") == 1 ? "selected" : "" %>>Administrador</option>
-                <option value="2" <%= result.getInt("tipoContaId") == 2 ? "selected" : "" %>>Funcionário</option>
-                <option value="3" <%= result.getInt("tipoContaId") == 3 ? "selected" : "" %>>Cliente</option>
-            </select>
-        </div>
-        <!-- envia os dados do formulario -->
-        <button type="submit" name="editar" class="btn btn-primary">Gravar Alterações</button>
-        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-light border">Cancelar</a>
-    </form>
+    <div class="mb-3">
+        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-sm btn-secondary">← Voltar</a>
+    </div>
+
+    <%-- ficheiro de edição --%>
+    <%@ include file="perfil_editar.jsp" %>
+
     <%
-            }
         } else {
-            out.println("<h2>" + secao + "' (Em construção).</h2>");
+        out.println("<h2>Seção '" + secao + "' em construção.</h2>");
         }
     %>
-    </div>
 </div>

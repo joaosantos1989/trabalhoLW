@@ -1,10 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
+<%-- alerta de produto adicionado ao carrinho --%>
 <% if ("1".equals(request.getParameter("adicionado"))) { %>
 <div class="container mt-2">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
         ✅ Produto adicionado ao carrinho!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
+<%-- alerta de encomenda submetida para o funcionário validar --%>
+<% if ("pendente".equals(request.getParameter("msg"))) { %>
+<div class="container mt-2">
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <strong>📩 Encomenda Submetida!</strong><br>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>

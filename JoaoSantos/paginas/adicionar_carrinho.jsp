@@ -65,6 +65,6 @@
         // redireciona para o carrinho
         response.sendRedirect("pagina_principal.jsp?adicionado=1");
     } else {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("login.jsp?needLogin=n"); //redireciona para login se tentar adicionar um produto sem estar autenticado
     }
 %>

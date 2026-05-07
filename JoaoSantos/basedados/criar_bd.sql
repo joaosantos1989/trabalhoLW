@@ -25,6 +25,10 @@ VALUES ('funcionario', 'funcionario@felixubershop.pt', MD5('funcionario'), 2, 1)
 INSERT INTO UTILIZADOR (username, email, password, tipoContaId, validation)
 VALUES ('cliente', 'cliente@felixubershop.pt', MD5('cliente'), 3, 2);
 
+-- felixubershop(loja)
+INSERT INTO UTILIZADOR (username, email, password, tipoContaId, validation)
+VALUES ('felixubershop', 'loja@felixubershop.pt', MD5('felixubershop'), 1, 1);
+
 
 -- Tabela CARTEIRA
 CREATE TABLE CARTEIRA (
@@ -36,13 +40,21 @@ CREATE TABLE CARTEIRA (
     FOREIGN KEY (id_utilizador) REFERENCES UTILIZADOR(id_utilizador)
 );
 
--- carteira especial da loja
-INSERT INTO CARTEIRA (id_utilizador, tipoCarteiraId)
-VALUES (1, 2);
+-- carteira admin
+INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
+VALUES (1, 100.00, 1);
+
+-- carteira funcionario
+INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
+VALUES (2, 100.00, 1);
 
 -- carteira cliente
 INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
 VALUES (3, 100.00, 1);
+
+-- carteira especial da loja
+    INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
+VALUES (3, 0.00, 2);
 
 
 -- Tabela MOVIMENTO_CARTEIRA
@@ -78,7 +90,7 @@ CREATE TABLE PROMOCAO (
 
 -- promocao 'leve 2 pague 1'
 INSERT INTO PROMOCAO (titulo, mensagem, data_inicio, data_fim, estado, id_utilizador)
-VALUES ('leve 2 pague 1', 'Escolha dois produtos e apenas pague um!', '2026-04-25 12:20:00', '2026-06-25 12:20:00', 1, 1);
+VALUES ('leve 2 pague 1', 'Escolha dois produtos e pague apenas um!', '2026-04-25 12:20:00', '2026-06-25 12:20:00', 1, 1);
 
 
 -- Tabela ENCOMENDA
@@ -123,7 +135,11 @@ VALUES ('Banana', 'Banana - 1kg.', 1.60);
 
 -- 5. produto 'Cebola'
 INSERT INTO PRODUTO (nome, descricao, preco)
-VALUES ('Cebola', 'BCebola Nova - 100g', 1.20);
+VALUES ('Cebola', 'BCebola Nova - 150g', 0.50);
+
+-- 6. produto 'Tomate'
+INSERT INTO PRODUTO (nome, descricao, preco)
+VALUES ('Tomate', 'Tomate Cherry - 100g', 1.50);
 
 
 -- Tabela ITEM_ENCOMENDA
