@@ -40,4 +40,4 @@
     </div>
 </div>
 
-<%@ include file="footer.jsp" %>lude file="footer.jsp" %>
+<%@ include file="footer.jsp" %>

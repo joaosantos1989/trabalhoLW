@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 
+<%
+    // identificar quem está logado
+    int tipoUser = Integer.parseInt(session.getAttribute("TipoConta").toString());
+    int idLogado = Integer.parseInt(session.getAttribute("idUtilizador").toString());
+%>
 <%-- alerta de encomenda submetida para o funcionário validar --%>
 <% if ("sucesso".equals(request.getParameter("msg"))) { %>
 <div class="container mt-2">
@@ -28,7 +33,7 @@
         <thead class="table-dark">
         <tr>
             <th>ID Único</th>
-            <th>Cliente</th>
+            <% if (tipoUser != 3) { %> <th>Cliente</th> <% } %> <%-- o cliente não ve o proprio nome--%>
             <th>Data</th>
             <th>Total</th>
             <th class="text-center">Ações</th>
@@ -36,25 +41,43 @@
         </thead>
         <tbody>
         <% //selecionamos as encomendas pendentes(estado 1)
-            String sql = "SELECT e.id_encomenda, u.username, e.data_hora, e.valor_total " +
-                    "FROM ENCOMENDA e, UTILIZADOR u " +
-                    "WHERE e.id_utilizador = u.id_utilizador AND e.estado = 1";
+            String sql;
+            // Admin/Func (1 e 2) vêem tudo o que está pendente (estado 1)
+            // Cliente (3) vê apenas as suas encomendas
+            if (tipoUser == 3) {
+                sql = "SELECT e.*, u.username FROM ENCOMENDA e JOIN UTILIZADOR u ON e.id_utilizador = u.id_utilizador " +
+                        "WHERE e.id_utilizador = " + idLogado + " ORDER BY e.data_hora DESC";
+            } else {
+                sql = "SELECT e.*, u.username FROM ENCOMENDA e JOIN UTILIZADOR u ON e.id_utilizador = u.id_utilizador " +
+                        "WHERE e.estado = 1 ORDER BY e.data_hora ASC";
+            }
             Statement statement = conn.createStatement();
             ResultSet result = statement.executeQuery(sql);
 
             while(result.next()) {
+                int idEnc = result.getInt("id_encomenda");
+                int estado = result.getInt("estado");
         %>
         <tr>
-            <td><strong>#<%= result.getInt("id_encomenda") %></strong></td>
-            <td><%= result.getString("username") %></td>
+            <td><strong>#<%= idEnc %></strong></td>
+            <% if (tipoUser != 3) { %> <td><%= result.getString("username") %></td> <% } %>
             <td><%= result.getDate("data_hora") %></td>
             <td class="text-success fw-bold"><%= result.getDouble("valor_total") %>€</td>
             <td class="text-center">
-                <a href="validar_encomenda.jsp?id_enc=<%= result.getInt("id_encomenda") %>"
-                   class="btn btn-sm btn-success">✅ Validar</a>
 
-                <a href="cancelar_encomenda.jsp?id_enc=<%= result.getInt("id_encomenda") %>"
-                   class="btn btn-sm btn-danger">❌ Cancelar</a>
+                <%-- Ações do CLIENTE --%>
+                <% if (tipoUser == 3) {
+                    if (estado == 1) { // Só edita/cancela se estiver pendente %>
+                        <a href="cancelar_encomenda.jsp?id_enc=<%= idEnc %>" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Deseja cancelar esta encomenda?')">Remover</a>
+                <% } %>
+
+                <% } else { %>
+                <%-- Ações do ADMIN / FUNCIONÁRIO --%>
+                <a href="validar_encomenda.jsp?id_enc=<%= idEnc %>" class="btn btn-sm btn-success">Validar</a>
+                <a href="cancelar_encomenda.jsp?id_enc=<%= idEnc %>" class="btn btn-sm btn-danger">Cancelar</a>
+                <% } %>
+
             </td>
         </tr>
         <% } %>
