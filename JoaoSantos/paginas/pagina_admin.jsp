@@ -12,22 +12,25 @@
         <a href="pagina_admin.jsp?secao=registos" class="btn btn-primary shadow-sm">📜 Registos</a>
     </div>
 
-    <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
+    <div id="secao-dashboard" >
         <%
             String secao = request.getParameter("secao");
             String acao = request.getParameter("acao");
-            String userId = request.getParameter("id");
+            String id = request.getParameter("id");
 
             if ("encomendas".equals(secao)) {
         %>
         <%@ include file="gestao_encomendas.jsp" %> <!-- tabela de gestão de encomendas -->
         <%
-        } else if ("utilizadores".equals(secao) || secao == null) {
+        }else if (secao == null || "utilizadores".equals(secao) || "editar_utilizador".equals(secao) || "aprovar_utilizador".equals(secao)){
         %>
         <%@ include file="admin_utilizadores.jsp" %> <!-- tabela de gestão de utilizadores -->
         <%
             } else if ("produtos".equals(secao)) {
                 out.println("<h2>Gestão de Produtos (Em construção)</h2>");
+            }
+            else {
+                out.println("<h2>Seção '" + secao + "' não encontrada.</h2>");
             }
         %>
     </div>

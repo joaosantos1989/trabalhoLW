@@ -4,27 +4,27 @@
 <!-- logica dos botões de controlo -->
 <div class="bg-white p-4 rounded shadow-sm border">
     <%
-        secao = request.getParameter("secao"); //utilizadores/editar_utilizadores/aprovar_utilizador
+        secao = request.getParameter("secao"); //utilizadores/editar_utilizador/aprovar_utilizador
         acao = request.getParameter("acao"); //remover
-        userId = request.getParameter("id"); //id do utilizador recebido nos gets
+        id = request.getParameter("id"); //id do utilizador recebido nos gets
 
         // --- Ações ---
         if (conn != null) {
             // remover utilizador da bd
-            if ("remover".equals(acao) && userId != null) {
+            if ("remover".equals(acao) && id != null) {
                 String sql = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
                 PreparedStatement clear = conn.prepareStatement(sql);
-                clear.setInt(1, Integer.parseInt(userId));
+                clear.setInt(1, Integer.parseInt(id));
                 clear.executeUpdate();
                 out.println("<div class='alert alert-danger'>Utilizador removido!</div>");
                 response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
             }
 
             // aprovar_utilizador
-            if ("aprovar_utilizador".equals(secao) && userId != null) {
+            if ("aprovar_utilizador".equals(secao) && id != null) {
                 String sql = "UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?";
                 PreparedStatement aprove = conn.prepareStatement(sql);
-                aprove.setInt(1, Integer.parseInt(userId));
+                aprove.setInt(1, Integer.parseInt(id));
                 aprove.executeUpdate();
                 out.println("<div class='alert alert-success'>Utilizador aprovado!</div>");
                 response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
@@ -74,7 +74,7 @@
             <td>
                 <!-- se ja esta validado, pode ser editado -->
                 <% if (validation == 1) { %>
-                <a href="pagina_admin.jsp?secao=editar_utilizadores&id=<%= idUser %>" class="btn btn-sm btn-outline-primary">✏️</a>
+                <a href="pagina_admin.jsp?secao=editar_utilizador&id=<%= idUser %>" class="btn btn-sm btn-outline-primary">✏️</a>
                 <% } else { %>
                 <!-- se não esta validado -->
                 <a href="pagina_admin.jsp?secao=aprovar_utilizador&id=<%= idUser %>" class="btn btn-sm btn-warning">✔️ Aprovar</a>
@@ -91,18 +91,18 @@
     <%
         //fim de secao utilizadores
     // secao editar_utilizadores
-        } else if ("editar_utilizadores".equals(secao)) {
+    } else if ("editar_utilizador".equals(secao)  && id != null) {
     %>
-    <div class="mb-3">
-        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-sm btn-secondary">← Voltar</a>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-sm btn-outline-secondary">← Voltar à lista</a>
     </div>
 
-    <%-- ficheiro de edição --%>
-    <%@ include file="perfil_editar.jsp" %>
+    <%-- invoca o formulario--%>
+    <%@ include file="editar_utilizador.jsp" %>
 
     <%
         } else {
-        out.println("<h2>Seção '" + secao + "' em construção.</h2>");
+            out.println("<h2>Seção '" + secao + "' em construção.</h2>");
         }
     %>
 </div>

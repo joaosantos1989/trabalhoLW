@@ -21,8 +21,8 @@
 </div>
 <% } %>
 
-<div class="container mt-5">
-    <h2 class="text-primary border-bottom pb-2">📋 Gestão de Encomendas Pendentes</h2>
+<div class="bg-white p-4 rounded shadow-sm border">
+    <h2 class="text-primary border-bottom pb-2">📋 Gestão de Encomendas</h2>
 
     <table class="table table-striped mt-4 shadow-sm">
         <thead class="table-dark">

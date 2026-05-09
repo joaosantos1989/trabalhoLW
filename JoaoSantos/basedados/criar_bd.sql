@@ -90,7 +90,7 @@ CREATE TABLE PROMOCAO (
 
 -- promocao 'leve 2 pague 1'
 INSERT INTO PROMOCAO (titulo, mensagem, data_inicio, data_fim, estado, id_utilizador)
-VALUES ('leve 2 pague 1', 'Escolha dois produtos e pague apenas um!', '2026-04-25 12:20:00', '2026-06-25 12:20:00', 1, 1);
+VALUES ('Leve 2 Pague 1', 'Escolha dois produtos e pague apenas um!', '2026-04-25 12:20:00', '2026-06-25 12:20:00', 1, 1);
 
 
 -- Tabela ENCOMENDA
