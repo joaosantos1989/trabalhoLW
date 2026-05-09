@@ -2,6 +2,16 @@
 <%@ page import="java.sql.*" %>
 <%@ include file="header.jsp" %>
 
+<%-- alerta de encomenda submetida para o funcionário/admin validar --%>
+<% if ("pendente".equals(request.getParameter("msg"))) { %>
+<div class="container mt-2">
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <strong>📩 Encomenda Submetida!</strong><br>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
 <div class="container mt-5">
     <h2 class="text-success border-bottom pb-2">🛒 O Meu Carrinho</h2>
 

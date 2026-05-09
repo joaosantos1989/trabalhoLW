@@ -26,6 +26,6 @@
         statementUpdate.executeUpdate();
 
         // Redireciona com mensagem de sucesso
-        response.sendRedirect("pagina_principal.jsp?msg=pendente");
+        response.sendRedirect("carrinho.jsp?msg=pendente");
     }
 %>

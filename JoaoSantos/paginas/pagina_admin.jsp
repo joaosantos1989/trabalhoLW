@@ -12,7 +12,7 @@
         <a href="pagina_admin.jsp?secao=registos" class="btn btn-primary shadow-sm">📜 Registos</a>
     </div>
 
-    <div id="secao-dashboard" >
+    <div id="secao-dashboard">
         <%
             String secao = request.getParameter("secao");
             String acao = request.getParameter("acao");
@@ -20,20 +20,22 @@
 
             if ("encomendas".equals(secao)) {
         %>
-        <%@ include file="gestao_encomendas.jsp" %> <!-- tabela de gestão de encomendas -->
+        <%@ include file="gestao_encomendas.jsp" %>
         <%
-        }else if (secao == null || "utilizadores".equals(secao) || "editar_utilizador".equals(secao) || "aprovar_utilizador".equals(secao)){
+        } else if (secao == null || "utilizadores".equals(secao) || "editar_utilizador".equals(secao) || "aprovar_utilizador".equals(secao)) {
         %>
-        <%@ include file="admin_utilizadores.jsp" %> <!-- tabela de gestão de utilizadores -->
+        <%@ include file="admin_utilizadores.jsp" %>
         <%
-            } else if ("produtos".equals(secao)) {
-                out.println("<h2>Gestão de Produtos (Em construção)</h2>");
-            }
-            else {
-                out.println("<h2>Seção '" + secao + "' não encontrada.</h2>");
+        } else if ("produtos".equals(secao) || "editar_produto".equals(secao) || "novo_produto".equals(secao)) {
+        %>
+        <%@ include file="admin_produtos.jsp" %>
+        <%
+        } else {
+        %>
+        <h2 class="text-center mt-5">⚠️ Seção '<%= secao %>' não encontrada.</h2>
+        <%
             }
         %>
     </div>
-</div>
 
 <%@ include file="footer.jsp" %>
