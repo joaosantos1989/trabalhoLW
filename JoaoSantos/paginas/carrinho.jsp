@@ -15,11 +15,11 @@
         </thead>
         <tbody>
         <%
-            String nomeUser = (String) session.getAttribute("utilizador");
+            int idUser = (int) session.getAttribute("idUtilizador");
             double totalACalcular = 0;
             int idDaEncomenda = 0;
 
-            if (conn != null && nomeUser != null) {
+            if (conn != null) {
                 // procuramos os produtos da encomenda que ainda não foram pagos(estado 0) do utilizador
                 String sql = "SELECT i.id_item, i.preco_unitario, p.nome, e.id_encomenda " +
                         "FROM ITEM_ENCOMENDA i, ENCOMENDA e, PRODUTO p, UTILIZADOR u " +
@@ -27,11 +27,11 @@
                         "AND i.id_produto = p.id_produto " +
                         "AND e.id_utilizador = u.id_utilizador " +
                         "AND e.estado = 0 " +
-                        "AND u.username = ?";
+                        "AND u.id_utilizador = ?";
 
 
                 PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1, nomeUser);
+                statement.setInt(1, idUser);
                 ResultSet result = statement.executeQuery();
 
                 // Se não houver produtos, a tabela ficará vazia
@@ -41,7 +41,7 @@
                     totalACalcular += preco;
         %>
         <tr>
-            <td><%= result.getString("nome") %></td>
+            <td><%= result.getString("nome") %></td> <!-- nome do produto -->
             <td><%= preco %>€</td>
             <td class="text-center">
                 <%-- Link para remover apenas este item --%>

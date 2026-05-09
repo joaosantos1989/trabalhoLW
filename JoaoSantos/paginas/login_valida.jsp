@@ -22,10 +22,12 @@
             if (result.next()) {
                 int tipoContaId = result.getInt("tipoContaId");
                 int validation = result.getInt("validation");
+                int id_utilizador = result.getInt("id_utilizador");
 
                 // validation == 1 significa que a conta está aprovada/ativa
                 if (validation == 1) {
                     // Cria as variáveis de sessão
+                    session.setAttribute("idUtilizador", result.getInt("id_utilizador"));
                     session.setAttribute("utilizador", result.getString("username"));
                     session.setAttribute("TipoConta", tipoContaId);
                     session.setAttribute("autenticado", true);

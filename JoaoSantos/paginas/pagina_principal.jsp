@@ -2,7 +2,7 @@
 <%@ include file="header.jsp" %>
 
 <%-- alerta de produto adicionado ao carrinho --%>
-<% if ("1".equals(request.getParameter("adicionado"))) { %>
+<% if ("add".equals(request.getParameter("adicionado"))) { %>
 <div class="container mt-2">
     <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
         ✅ Produto adicionado ao carrinho!

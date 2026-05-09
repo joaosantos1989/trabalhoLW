@@ -1,93 +1,102 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
+<%-- perfil_editar.jsp --%>
+<%@ page pageEncoding="UTF-8"%>
 
 <%
-    // 1. Identificar qual ID editar (do link ou da sessão)
-    String idParaEditar = request.getParameter("id");
-    if (idParaEditar == null) {
-        idParaEditar = session.getAttribute("id_utilizador").toString();
-    }
+    // Importante: NÃO declaramos "String userId" aqui.
+    // Usamos a variável que já foi criada no ficheiro pai.
 
-    // 2. Lógica para Gravar os dados
-    if (request.getParameter("gravar") != null) {
-        String novoNome = request.getParameter("nome");
-        String novoEmail = request.getParameter("email");
-        String novaPass = request.getParameter("password");
-        String novoTipo = request.getParameter("tipoContaId");
+    // 1. Lógica de Gravação (POST)
+    if (request.getMethod().equalsIgnoreCase("POST")) {
+        String editUsername = request.getParameter("editUsername");
+        String editEmail = request.getParameter("editEmail");
+        String editPass = request.getParameter("editPassword");
 
-        // Atualização básica (Nome e Email)
-        String sql1 = "UPDATE UTILIZADOR SET username = ?, email = ? WHERE id_utilizador = ?";
-        PreparedStatement ps1 = conn.prepareStatement(sql1);
-        ps1.setString(1, novoNome);
-        ps1.setString(2, novoEmail);
-        ps1.setInt(3, Integer.parseInt(idParaEditar));
-        ps1.executeUpdate();
-
-        // Se escreveu password, atualiza para MD5
-        if (novaPass != null && !novaPass.isEmpty()) {
-            String sql2 = "UPDATE UTILIZADOR SET password = MD5(?) WHERE id_utilizador = ?";
-            PreparedStatement ps2 = conn.prepareStatement(sql2);
-            ps2.setString(1, novaPass);
-            ps2.setInt(2, Integer.parseInt(idParaEditar));
-            ps2.executeUpdate();
+        // Verificamos se o userId existe (seja do URL ou da Sessão)
+        if (userId == null || userId.isEmpty() || userId.equals("null")) {
+            userId = String.valueOf(session.getAttribute("idUtilizador"));
         }
 
-        // Se for o Admin a editar, atualiza também o Tipo de Conta
-        if (session.getAttribute("tipoContaId").equals(1) && novoTipo != null) {
-            String sql3 = "UPDATE UTILIZADOR SET tipoContaId = ? WHERE id_utilizador = ?";
-            PreparedStatement ps3 = conn.prepareStatement(sql3);
-            ps3.setInt(1, Integer.parseInt(novoTipo));
-            ps3.setInt(2, Integer.parseInt(idParaEditar));
-            ps3.executeUpdate();
-        }
+        if (userId != null && conn != null) {
+            try {
+                String sqlUpdate;
+                PreparedStatement psUpdate;
 
-        out.println("<div class='alert alert-success'>Dados atualizados!</div>");
+                if (editPass != null && !editPass.isEmpty()) {
+                    sqlUpdate = "UPDATE UTILIZADOR SET username=?, email=?, password=MD5(?) WHERE id_utilizador=?";
+                    psUpdate = conn.prepareStatement(sqlUpdate);
+                    psUpdate.setString(1, editUsername);
+                    psUpdate.setString(2, editEmail);
+                    psUpdate.setString(3, editPass);
+                    psUpdate.setInt(4, Integer.parseInt(userId));
+                } else {
+                    sqlUpdate = "UPDATE UTILIZADOR SET username=?, email=? WHERE id_utilizador=?";
+                    psUpdate = conn.prepareStatement(sqlUpdate);
+                    psUpdate.setString(1, editUsername);
+                    psUpdate.setString(2, editEmail);
+                    psUpdate.setInt(3, Integer.parseInt(userId));
+                }
+
+                psUpdate.executeUpdate();
+                out.println("<div class='alert alert-success shadow-sm'>✔️ Dados atualizados com sucesso!</div>");
+            } catch (Exception e) {
+                out.println("<div class='alert alert-danger shadow-sm'>❌ Erro ao atualizar: " + e.getMessage() + "</div>");
+            }
+        }
     }
 
-    // 3. Buscar dados atuais para preencher as caixas
-    String sqlLoad = "SELECT * FROM UTILIZADOR WHERE id_utilizador = ?";
-    PreparedStatement psLoad = conn.prepareStatement(sqlLoad);
-    psLoad.setInt(1, Integer.parseInt(idParaEditar));
-    ResultSet rs = psLoad.executeQuery();
+    // 2. Lógica de Leitura (Buscar dados para o formulário)
+    // Se o userId for nulo (caso do funcionário a editar-se a si próprio), usamos o da sessão
+    if (userId == null || userId.isEmpty() || userId.equals("null")) {
+        userId = String.valueOf(session.getAttribute("idUtilizador"));
+    }
 
-    if (rs.next()) {
+    if (userId != null && conn != null) {
+        String sqlBusca = "SELECT * FROM UTILIZADOR WHERE id_utilizador = ?";
+        PreparedStatement psBusca = conn.prepareStatement(sqlBusca);
+        psBusca.setInt(1, Integer.parseInt(userId));
+        ResultSet rsEdit = psBusca.executeQuery();
+
+        if (rsEdit.next()) {
 %>
 
-<div class="card p-4">
-    <form method="POST">
-        <div class="mb-3">
-            <label>Nome de Utilizador:</label>
-            <input type="text" name="nome" class="form-control" value="<%= rs.getString("username") %>" required>
-        </div>
+<div class="card mt-3 shadow-sm border-primary">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">👤 Editar Perfil: <%= rsEdit.getString("username") %></h5>
+        <span class="badge bg-light text-primary">ID: #<%= userId %></span>
+    </div>
+    <div class="card-body bg-light">
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Nome de Utilizador</label>
+                    <input type="text" name="editUsername" class="form-control"
+                           value="<%= rsEdit.getString("username") %>" required>
+                </div>
 
-        <div class="mb-3">
-            <label>E-mail:</label>
-            <input type="email" name="email" class="form-control" value="<%= rs.getString("email") %>" required>
-        </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">E-mail</label>
+                    <input type="email" name="editEmail" class="form-control"
+                           value="<%= rsEdit.getString("email") %>" required>
+                </div>
+            </div>
 
-        <div class="mb-3">
-            <label>Password:</label>
-            <input type="password" name="password" class="form-control">
-        </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nova Password</label>
+                <input type="password" name="editPassword" class="form-control"
+                       placeholder="Deixe em branco para manter a atual">
+                <div class="form-text">A password será encriptada automaticamente.</div>
+            </div>
 
-        <%-- Mostra a lista de tipos apenas se quem estiver logado for Admin --%>
-        <% if (session.getAttribute("TipoConta").equals(1)) { %>
-        <div class="mb-3">
-            <label>Tipo de Conta:</label>
-            <select name="tipoContaId" class="form-select">
-                <option value="1" <%= rs.getInt("tipoContaId") == 1 ? "selected" : "" %>>Administrador</option>
-                <option value="2" <%= rs.getInt("tipoContaId") == 2 ? "selected" : "" %>>Funcionário</option>
-                <option value="3" <%= rs.getInt("tipoContaId") == 3 ? "selected" : "" %>>Cliente</option>
-            </select>
-        </div>
-        <% } %>
-
-        <button type="submit" name="gravar" class="btn btn-primary">Gravar Alterações</button>
-    </form>
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                    💾 Gravar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <%
+        }
     }
-    rs.close();
-    psLoad.close();
 %>
