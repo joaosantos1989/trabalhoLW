@@ -8,6 +8,7 @@
         <a href="pagina_admin.jsp?secao=produtos" class="btn btn-primary shadow-sm">📦 Produtos</a>
         <a href="pagina_admin.jsp?secao=encomendas" class="btn btn-primary shadow-sm">📋 Encomendas</a>
         <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-primary shadow-sm">👥 Utilizadores</a>
+        <a href="pagina_admin.jsp?secao=carteira" class="btn btn-primary shadow-sm">💰 Gerir Carteiras</a>
         <a href="pagina_admin.jsp?secao=alertas" class="btn btn-primary shadow-sm">🚨 Alertas</a>
         <a href="pagina_admin.jsp?secao=registos" class="btn btn-primary shadow-sm">📜 Registos</a>
     </div>
@@ -18,23 +19,42 @@
             String acao = request.getParameter("acao");
             String id = request.getParameter("id");
 
-            if ("encomendas".equals(secao)) {
+            if ("produtos".equals(secao) || "editar_produto".equals(secao) || "novo_produto".equals(secao)) {
         %>
-        <%@ include file="gestao_encomendas.jsp" %>
+        <%@ include file="admin_produtos.jsp" %> <!-- gestão de produtos -->
+
         <%
-        } else if (secao == null || "utilizadores".equals(secao) || "editar_utilizador".equals(secao) || "aprovar_utilizador".equals(secao)) {
+             } else if ("encomendas".equals(secao)) {
         %>
-        <%@ include file="admin_utilizadores.jsp" %>
+        <%@ include file="gestao_encomendas.jsp" %> <!-- gestão de encomendas -->
+
         <%
-        } else if ("produtos".equals(secao) || "editar_produto".equals(secao) || "novo_produto".equals(secao)) {
+            } else if (secao == null || "utilizadores".equals(secao) || "editar_utilizador".equals(secao) || "aprovar_utilizador".equals(secao)) {
         %>
-        <%@ include file="admin_produtos.jsp" %>
+        <%@ include file="admin_utilizadores.jsp" %> <!-- gestão de utilizadores -->
+
         <%
-        } else {
+            } else if ("carteira".equals(secao) || "gestao_carteira".equals(secao)) {
         %>
-        <h2 class="text-center mt-5">⚠️ Seção '<%= secao %>' não encontrada.</h2>
+        <%@ include file="admin_carteiras.jsp" %>
+
         <%
-            }
+            } else if ("alertas".equals(secao)) {
+        %>
+            <div class="alert alert-info"> Seção <%=secao%> (Em construção).</div> <!-- gestão de alertas -->
+
+        <%
+            } else if ("registos".equals(secao)) {
+        %>
+        <%@ include file="admin_registos.jsp" %> <!-- gestão de movimentos -->
+
+        <%
+            } else {
+        %>
+            <div class="alert alert-info"> Seção <%=secao%> não encontrada! </div> <!-- gestão de alertas -->
+
+        <%
+                }
         %>
     </div>
 

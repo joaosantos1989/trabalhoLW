@@ -10,30 +10,36 @@
     <%-- botões de controlo de secao --%>
     <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
         <a href="pagina_funcionario.jsp?secao=encomendas" class="btn btn-primary shadow-sm">📋 Encomendas</a>
-        <a href="pagina_funcionario.jsp?secao=saldo" class="btn btn-primary shadow-sm">💰 Saldo de Clientes</a>
+        <a href="pagina_funcionario.jsp?secao=carteira" class="btn btn-primary shadow-sm">💰 Gerir Carteiras</a>
         <a href="pagina_funcionario.jsp?secao=editar_utilizador&id=<%= idSessao %>" class="btn btn-primary shadow-sm">👤 Dados Pessoais</a>
     </div>
 
     <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
         <%
             String secao = request.getParameter("secao");
-            // saldo de clientes
-            if ("saldo".equals(secao)) {
+            // carteira de clientes
+            if ("encomendas".equals(secao)) {
         %>
-        <h2 class="text-primary border-bottom pb-2 mb-4">💰 Gestão de Saldo de Clientes</h2>
-        <div class="alert alert-info"> (Em construção).</div>
+        <%@ include file="gestao_encomendas.jsp" %> <%-- gestão de encomendas --%>
+
         <%
-            // dados pessoais
+        } else if ("carteira".equals(secao) || "gestao_carteira".equals(secao)) {
+        %>
+        <%@ include file="admin_carteiras.jsp" %> <%-- gestão de carteiras --%>
+
+        <%
         } else if ("editar_utilizador".equals(secao)) {
         %>
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
             <a href="pagina_funcionario.jsp?secao=encomendas" class="btn btn-sm btn-outline-secondary">← Voltar</a>
         </div>
-            <%@ include file="editar_utilizador.jsp" %> <%-- editar dados pessoais --%>
+        <%@ include file="editar_utilizador.jsp" %> <%-- editar dados pessoais --%>
+
         <%
-        } else {
+        } else { //default
         %>
         <%@ include file="gestao_encomendas.jsp" %> <%-- tabela de gestão de encomendas --%>
+
         <%
             }
         %>
