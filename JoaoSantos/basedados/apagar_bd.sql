@@ -1,6 +1,9 @@
 -- Selecionar a base de dados
 USE felix_uber_shop;
 
+-- Desativar chaves forasteiras
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- Eliminar tabelas
 DROP TABLE IF EXISTS ITEM_ENCOMENDA;
 DROP TABLE IF EXISTS ENCOMENDA;
@@ -9,6 +12,9 @@ DROP TABLE IF EXISTS PROMOCAO;
 DROP TABLE IF EXISTS MOVIMENTO_CARTEIRA;
 DROP TABLE IF EXISTS CARTEIRA;
 DROP TABLE IF EXISTS UTILIZADOR;
+
+-- Ativar chaves forasteiras
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- Eliminar a base de dados
 DROP DATABASE IF EXISTS felix_uber_shop;

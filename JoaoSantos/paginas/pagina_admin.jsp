@@ -36,7 +36,7 @@
         <%
             } else if ("carteira".equals(secao) || "gestao_carteira".equals(secao)) {
         %>
-        <%@ include file="admin_carteiras.jsp" %>
+        <%@ include file="gerir_carteiras.jsp" %>
 
         <%
             } else if ("alertas".equals(secao)) {
@@ -51,7 +51,7 @@
         <%
             } else {
         %>
-            <div class="alert alert-info"> Seção <%=secao%> não encontrada! </div> <!-- gestão de alertas -->
+            <div class="alert alert-info"> Seção <%=secao%> não encontrada! </div>
 
         <%
                 }

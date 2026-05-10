@@ -54,7 +54,7 @@ VALUES (3, 100.00, 1);
 
 -- carteira especial da loja
     INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
-VALUES (3, 0.00, 2);
+VALUES (4, 0.00, 2);
 
 
 -- Tabela MOVIMENTO_CARTEIRA

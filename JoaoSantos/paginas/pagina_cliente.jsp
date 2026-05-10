@@ -3,37 +3,39 @@
 <%@ include file="header.jsp" %>
 
 <%
-    String idSessao = session.getAttribute("idUtilizador").toString();
+    int meuId = (int) session.getAttribute("idUtilizador");
+    String secao = request.getParameter("secao");
 %>
 
 <div class="container mt-4">
-    <%-- botões de controlo de secao --%>
+    <%-- Botões de Navegação --%>
     <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
         <a href="pagina_cliente.jsp?secao=encomendas" class="btn btn-primary shadow-sm">📋 Encomendas</a>
-        <a href="pagina_cliente.jsp?secao=carteira" class="btn btn-primary shadow-sm">💰 Carteira</a>
-        <a href="pagina_cliente.jsp?secao=editar_utilizador&id=<%= idSessao %>" class="btn btn-primary shadow-sm">👤 Dados Pessoais</a>
+        <a href="pagina_cliente.jsp?secao=carteira&id=<%= meuId %>" class="btn btn-primary shadow-sm">💰 Gerir Carteira</a>
+        <a href="pagina_cliente.jsp?secao=editar_utilizador&id=<%= meuId %>" class="btn btn-primary shadow-sm">👤 Dados Pessoais</a>
     </div>
 
-    <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
+    <div id="secao-dashboard">
         <%
-            String secao = request.getParameter("secao");
-            // carteira
-            if ("carteira".equals(secao)) {
+            if ("encomendas".equals(secao)) {
         %>
-        <h2 class="text-primary border-bottom pb-2 mb-4">💰 carteira</h2>
-        <div class="alert alert-info"> (Em construção).</div>
+        <%@ include file="gestao_encomendas.jsp" %>
+
         <%
-            // dados pessoais
+        } else if ("carteira".equals(secao)) {
+        %>
+        <%@ include file="gestao_carteira.jsp" %>
+
+        <%
         } else if ("editar_utilizador".equals(secao)) {
         %>
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <a href="pagina_cliente.jsp?secao=encomendas" class="btn btn-sm btn-outline-secondary">← Voltar</a>
-        </div>
-        <%@ include file="editar_utilizador.jsp" %> <%-- editar dados pessoais --%>
+        <%@ include file="editar_utilizador.jsp" %>
+
         <%
-        } else {
+        } else { //default
         %>
         <%@ include file="gestao_encomendas.jsp" %> <%-- tabela de gestão de encomendas --%>
+
         <%
             }
         %>

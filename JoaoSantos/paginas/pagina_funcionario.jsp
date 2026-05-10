@@ -14,7 +14,7 @@
         <a href="pagina_funcionario.jsp?secao=editar_utilizador&id=<%= idSessao %>" class="btn btn-primary shadow-sm">👤 Dados Pessoais</a>
     </div>
 
-    <div id="secao-dashboard" class="bg-white p-4 rounded shadow-sm border">
+    <div id="secao-dashboard">
         <%
             String secao = request.getParameter("secao");
             // carteira de clientes
@@ -25,14 +25,11 @@
         <%
         } else if ("carteira".equals(secao) || "gestao_carteira".equals(secao)) {
         %>
-        <%@ include file="admin_carteiras.jsp" %> <%-- gestão de carteiras --%>
+        <%@ include file="gerir_carteiras.jsp" %> <%-- gestão de carteiras --%>
 
         <%
         } else if ("editar_utilizador".equals(secao)) {
         %>
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <a href="pagina_funcionario.jsp?secao=encomendas" class="btn btn-sm btn-outline-secondary">← Voltar</a>
-        </div>
         <%@ include file="editar_utilizador.jsp" %> <%-- editar dados pessoais --%>
 
         <%

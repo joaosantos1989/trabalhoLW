@@ -51,7 +51,11 @@
         <tbody>
         <% //vamos buscar o tipo de utilizador, se esta validado e o id
             Statement statement = conn.createStatement();
-            String sql = "SELECT * FROM UTILIZADOR";
+            String sql = "SELECT u.id_utilizador, u.username, u.validation, u.tipoContaID " +
+                    "FROM utilizador u, carteira c " +
+                    "WHERE u.id_utilizador = c.id_utilizador " +
+                    "AND c.tipoCarteiraID != 2 "; //o nome da loja não aparece
+
             ResultSet result = statement.executeQuery(sql);
             while (result.next()) {
                 int tipoContaId = result.getInt("tipoContaId");
@@ -94,7 +98,7 @@
     } else if ("editar_utilizador".equals(secao)  && id != null) {
     %>
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-sm btn-outline-secondary">← Voltar à lista</a>
+        <a href="pagina_admin.jsp?secao=utilizadores" class="btn btn-sm btn-outline-secondary">← Voltar</a>
     </div>
 
     <%-- invoca o formulario--%>
