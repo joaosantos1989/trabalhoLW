@@ -2,7 +2,6 @@
 <%@ page import="java.sql.*" %>
 
 <%
-    // 1. Pegar dados da sessão (Nomes iguais ao teu login.jsp)
     Object sessaoID = session.getAttribute("idUtilizador");
     Object sessaoTipo = session.getAttribute("TipoConta");
 
@@ -11,58 +10,72 @@
         int idLogado = (int) sessaoID;
         int tipoUser = (int) sessaoTipo;
 
-        // ID de quem vamos mexer (se não houver no link, usa o próprio)
-        String idAlvoParam = request.getParameter("id");
-        String idAlvo = (idAlvoParam != null && !idAlvoParam.isEmpty()) ? idAlvoParam : String.valueOf(idLogado);
+        // id do utilizador recebido
+        String idUserRecebido = request.getParameter("id");
+        String idUserGerido;//user a ser gerido
 
-        // Definir link de retorno
-        String linkVoltar = (tipoUser == 1) ? "pagina_admin.jsp?secao=carteira" : "pagina_cliente.jsp?secao=carteira";
+        // se o id for recebido significa que esta a ser gerido por admin ou funcionario
+        if (idUserRecebido != null) {
+            idUserGerido = idUserRecebido;
+        } else {
+            // se não for recebido significa que é o cliente a gerir o seu saldo
+            idUserGerido = session.getAttribute("idUtilizador").toString();
+        }
 
-        // 2. Lógica de Gravação (POST)
+        // volta para a pagina do utilizador a gerir a carteira
+        String pagAnterior = (tipoUser == 1) ? "pagina_admin.jsp?secao=carteira"
+                            : (tipoUser == 2) ? "pagina_funcionario.jsp?secao=carteira"
+                            : "pagina_cliente.jsp?secao=inicio";
+
         if ("POST".equalsIgnoreCase(request.getMethod())) {
-            double v = Double.parseDouble(request.getParameter("valor"));
-            String op = request.getParameter("operacao");
-            double vFinal = ("retirar".equals(op)) ? -v : v;
+            double valor = Double.parseDouble(request.getParameter("valor"));
+            String operacao = request.getParameter("operacao");
+            double valorFinal = ("retirar".equals(operacao)) ? -valor : valor;
 
             // Update Saldo
-            PreparedStatement ps1 = conn.prepareStatement("UPDATE carteira SET saldo = saldo + ? WHERE id_utilizador = ?");
-            ps1.setDouble(1, vFinal);
-            ps1.setInt(2, Integer.parseInt(idAlvo));
+            String sqlUpdate = "UPDATE carteira SET saldo = saldo + ? WHERE id_utilizador = ?";
+            PreparedStatement ps1 = conn.prepareStatement(sqlUpdate);
+            ps1.setDouble(1, valorFinal);
+            ps1.setInt(2, Integer.parseInt(idUserGerido));
             ps1.executeUpdate();
 
-            // Log de Movimento
-            PreparedStatement ps2 = conn.prepareStatement("INSERT INTO movimento_carteira (data_hora, valor, tipoOperacaoId, id_carteira_origem, id_carteira_destino) VALUES (NOW(), ?, ?, ?, ?)");
-            ps2.setDouble(1, v);
-            ps2.setInt(2, ("adicionar".equals(op) ? 2 : 3));
-            ps2.setInt(3, idLogado);
-            ps2.setInt(4, Integer.parseInt(idAlvo));
-            ps2.executeUpdate();
+            // registo do movimento
+            String sqlReg = "INSERT INTO movimento_carteira (data_hora, valor, tipoOperacaoId, " +
+                            "id_carteira_origem, id_carteira_destino) VALUES (NOW(), ?, ?, ?, ?)";
+            PreparedStatement statementReg = conn.prepareStatement(sqlReg);
+            statementReg.setDouble(1, valor);
+            statementReg.setInt(2, ("adicionar".equals(operacao) ? 2 : 3));
+            statementReg.setInt(3, idLogado);
+            statementReg.setInt(4, Integer.parseInt(idUserGerido));
+            statementReg.executeUpdate();
 
-            response.sendRedirect(linkVoltar + "&msg=saldo_ok");
+            response.sendRedirect(pagAnterior + "&msg=saldo_ok");
             return;
         }
 
-        // 3. Buscar Nome e Saldo Atual para mostrar
-        PreparedStatement ps3 = conn.prepareStatement("SELECT u.username, c.saldo FROM utilizador u, carteira c WHERE u.id_utilizador = c.id_utilizador AND u.id_utilizador = ?");
-        ps3.setInt(1, Integer.parseInt(idAlvo));
-        ResultSet rs3 = ps3.executeQuery();
+        // procuramos o nome e o saldo do utilziador
+        String sqlSelect = "SELECT u.username, c.saldo FROM utilizador u, carteira c " +
+                            "WHERE u.id_utilizador = c.id_utilizador AND u.id_utilizador = ?";
+        PreparedStatement statementSelect = conn.prepareStatement(sqlSelect);
+        statementSelect.setInt(1, Integer.parseInt(idUserGerido));
+        ResultSet resultSelect = statementSelect.executeQuery();
 
-        if (rs3.next()) {
+        if (resultSelect.next()) {
 %>
 
 <div class="row justify-content-center mt-3">
     <div class="col-md-5">
         <div class="card p-4 shadow-sm border-0">
-            <h4 class="text-center">Gerir: <strong><%= rs3.getString("username") %></strong></h4>
+            <h4 class="text-center">Gerir: <strong><%= resultSelect.getString("username") %></strong></h4>
 
             <div class="alert alert-info text-center my-3">
-                Saldo Atual: <strong><%= rs3.getDouble("saldo") %>€</strong>
+                Saldo Atual: <strong><%= resultSelect.getDouble("saldo") %>€</strong>
             </div>
 
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Valor (€):</label>
-                    <input type="number" name="valor" step="0.01" class="form-control" required placeholder="0.00">
+                    <input type="number" name="valor" step="0.01" min="0.01" class="form-control" required placeholder="0.00">
                 </div>
 
                 <div class="mb-3">
@@ -74,13 +87,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Confirmar Alteração</button>
-                <a href="<%= linkVoltar %>" class="btn btn-outline-secondary w-100 mt-2">← Voltar</a>
+                <a href="<%= pagAnterior %>" class="btn btn-outline-secondary w-100 mt-2">← Voltar</a>
             </form>
         </div>
     </div>
 </div>
 
 <%
-        } // Fecha if(rs3.next)
-    } // Fecha if(sessaoID != null)
+        }
+    }
 %>

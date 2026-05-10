@@ -13,9 +13,14 @@
 <div class="bg-white p-4 rounded shadow-sm border mt-3">
     <h2 class="text-primary border-bottom pb-2">💰 Gestão de Carteira</h2>
 
-    <!-- alerta de saldo atualizado -->
+    <%-- alerta de operação --%>
     <% if ("saldo_ok".equals(request.getParameter("msg"))) { %>
-    <div class="alert alert-success text-center">✅ Operação realizada com sucesso!</div>
+    <div class="container mt-2">
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <strong>✅ Operação realizada com sucesso!</strong><br>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
     <% } %>
 
     <table class="table table-hover mt-3 border">

@@ -15,6 +15,16 @@
         <a href="pagina_cliente.jsp?secao=editar_utilizador&id=<%= meuId %>" class="btn btn-primary shadow-sm">👤 Dados Pessoais</a>
     </div>
 
+        <%-- alerta de operação --%>
+    <% if ("saldo_ok".equals(request.getParameter("msg"))) { %>
+        <div class="container mt-2">
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                <strong>✅ Operação realizada com sucesso!</strong><br>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    <% } %>
+
     <div id="secao-dashboard">
         <%
             if ("encomendas".equals(secao)) {

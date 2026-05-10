@@ -26,7 +26,7 @@
             <th>Valor</th>
             <th>Origem (De)</th>
             <th>Destino (Para)</th>
-            <th>Estado</th>
+            <th>Tipo Movimento</th>
         </tr>
         </thead>
         <tbody>
@@ -50,13 +50,12 @@
                 ResultSet resultOrder = statementOrder.executeQuery(sql);
 
                 while(resultOrder.next()) {
-                    int numEstado = resultOrder.getInt("tipoOperacaoId");// tipo do estado da encomenda
-                    String textoEstado = "";
-                    // damos o nome do estado
-                    if (numEstado == 0) { textoEstado = "No Carrinho"; }
-                    else if (numEstado == 1) { textoEstado = "Pendente"; }
-                    else if (numEstado == 2) { textoEstado = "Paga"; }
-                    else if (numEstado == 3) { textoEstado = "Cancelada"; }
+                    int tipoOperacao = resultOrder.getInt("tipoOperacaoId");// tipo de operacao
+                    String nomeOperacao = "";
+                    // damos o nome da operacao
+                    if (tipoOperacao == 1) { nomeOperacao = "Saldo Adicionado"; }
+                    else if (tipoOperacao == 2) { nomeOperacao = "Saldo Retirado"; }
+                    else if (tipoOperacao == 3) { nomeOperacao = "Encomenda Paga"; }
         %>
         <tr>
             <td>#<%= resultOrder.getInt("id_movimento") %></td>
@@ -65,7 +64,7 @@
             <%-- nomes dos utilizadores pesquisados --%>
             <td><%= resultOrder.getString("nome1") %></td>
             <td><%= resultOrder.getString("nome2") %></td>
-            <td><%= textoEstado %></td>
+            <td class="text-primary fw-bold"><%= nomeOperacao %></td>
         </tr>
         <%
                 }
