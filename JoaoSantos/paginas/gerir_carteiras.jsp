@@ -48,7 +48,7 @@
         <tr>
             <td>
                 <strong><%= resultSaldo.getString("username") %></strong>
-                <%-- Se for a carteira tipo 2, da loja--%>
+                <%-- Se for a carteira tipoConta 2, da loja--%>
                 <% if (tipoCart == 2) { %>
                 <span class="badge bg-warning text-dark">LOJA</span>
                 <% } %>

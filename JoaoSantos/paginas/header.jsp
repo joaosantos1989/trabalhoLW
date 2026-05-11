@@ -49,10 +49,10 @@
                 <li class="nav-item"><a class="nav-link" href="registo.jsp">Registar</a></li>
                 <%
                 } else {
-                    // se estiver logado, vamos buscar o tipo
+                    // se estiver logado, vamos buscar o tipoConta
                     int tipo = (int) session.getAttribute("TipoConta");//convertemos para int porque para o Java ainda é um objeto
 
-                    //paginas principais de cada tipo de utilizador
+                    //paginas principais de cada tipoConta de utilizador
                     if (tipo == 1) { // ADMINISTRADOR
                 %>
                 <li class="nav-item">

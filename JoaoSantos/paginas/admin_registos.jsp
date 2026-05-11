@@ -50,7 +50,7 @@
                 ResultSet resultOrder = statementOrder.executeQuery(sql);
 
                 while(resultOrder.next()) {
-                    int tipoOperacao = resultOrder.getInt("tipoOperacaoId");// tipo de operacao
+                    int tipoOperacao = resultOrder.getInt("tipoOperacaoId");// tipoConta de operacao
                     String nomeOperacao = "";
                     // damos o nome da operacao
                     if (tipoOperacao == 1) { nomeOperacao = "Saldo Adicionado"; }

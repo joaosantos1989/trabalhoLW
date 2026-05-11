@@ -3,7 +3,19 @@
 <%@ include file="header.jsp" %>
 
 <%
-    int meuId = (int) session.getAttribute("idUtilizador");
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 3) {
+        // Se não for cliente, expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
+    int meuId = (int) session.getAttribute("idUtilizador"); //precisamos do id do cliente para editar os dados ou gerir a carteira
     String secao = request.getParameter("secao");
 %>
 

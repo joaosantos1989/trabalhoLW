@@ -3,7 +3,19 @@
 <%@ include file="header.jsp" %>
 
 <%
-    String idSessao = session.getAttribute("idUtilizador").toString();
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 2) {
+        // Se não for funcionario, expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
+    String idSessao = session.getAttribute("idUtilizador").toString(); //precisamos do id do utilizador para gerir os seus dados
 %>
 
 <div class="container mt-4">

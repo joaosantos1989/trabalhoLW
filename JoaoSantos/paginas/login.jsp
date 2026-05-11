@@ -10,6 +10,16 @@
 </div>
 <% } %>
 
+<!-- tipo de utilizador errado -->
+<% if ("acesso_negado".equals(request.getParameter("needLogin"))) { %>
+<div class="container mt-2">
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        Acesso negado!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-11 col-sm-8 col-md-6 col-lg-4">

@@ -1,6 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
+<%
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
+        // Se não for admin, expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
 
 <div class="container mt-4">
     <!-- botões de controlo de admin -->

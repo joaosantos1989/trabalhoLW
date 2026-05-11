@@ -12,7 +12,7 @@
     ResultSet resultUser = statementUser.executeQuery();
 
     if (resultUser.next()) { // Se o utilizador existir...
-        // guardamos o tipo atual para usar caso o formulário não envie um novo
+        // guardamos o tipoConta atual para usar caso o formulário não envie um novo
         int tipoAtual = resultUser.getInt("tipoContaId");
 %>
 
@@ -25,9 +25,9 @@
         String formPass = request.getParameter("password");
         String formTipoConta = request.getParameter("tipoContaID");
 
-        //se não for admin a editar os dados nao vai mudar o tipo de conta
+        //se não for admin a editar os dados nao vai mudar o tipoConta de conta
         if (formTipoConta == null) {
-            formTipoConta = String.valueOf(tipoAtual); //tipo de utilizador a mudar os dados pessoais
+            formTipoConta = String.valueOf(tipoAtual); //tipoConta de utilizador a mudar os dados pessoais
         }
 
         String sqlUpd;
@@ -82,7 +82,7 @@
                     <label class="form-label small fw-bold">Nova Password:</label>
                     <input type="password" name="password" class="form-control form-control-lg" placeholder="deixe vazio se não quiser mudar">
                 </div>
-                <%-- so mostra o menu para mudar de tipo de user se for admin --%>
+                <%-- so mostra o menu para mudar de tipoConta de user se for admin --%>
                 <% if (session.getAttribute("TipoConta").toString().equals("1")) { %>
                 <div class="mb-4">
                     <label class="form-label fw-bold small">Tipo de Conta</label>

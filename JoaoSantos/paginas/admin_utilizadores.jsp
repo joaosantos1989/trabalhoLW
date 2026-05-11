@@ -49,7 +49,7 @@
         </tr>
         </thead>
         <tbody>
-        <% //vamos buscar o tipo de utilizador, se esta validado e o id
+        <% //vamos buscar o tipoConta de utilizador, se esta validado e o id
             Statement statement = conn.createStatement();
             String sql = "SELECT u.id_utilizador, u.username, u.validation, u.tipoContaID " +
                     "FROM utilizador u, carteira c " +
@@ -59,22 +59,22 @@
             ResultSet result = statement.executeQuery(sql);
             while (result.next()) {
                 int tipoContaId = result.getInt("tipoContaId");
-                String tipoUser = "";
+                String tipoUtilizador = "";
 
                 if (tipoContaId == 1) {
-                    tipoUser = "Admin";
+                    tipoUtilizador = "Admin";
                 } else if (tipoContaId == 2) {
-                    tipoUser = "Funcionario";
+                    tipoUtilizador = "Funcionario";
                 } else {
-                    tipoUser = "Cliente";
+                    tipoUtilizador = "Cliente";
                 }
                 int validation = result.getInt("validation");
                 int idUser = result.getInt("id_utilizador");
         %>
         <tr> <!-- apresentamos o nome do utilizador na coluna nome -->
             <td><%= result.getString("username") %></td>
-            <!-- badge = etiqueta arredondada, apresenta o tipo de utilizador na coluna tipo -->
-            <td><span class="badge bg-secondary"><%= tipoUser %></span></td>
+            <!-- badge = etiqueta arredondada, apresenta o tipoConta de utilizador na coluna tipoConta -->
+            <td><span class="badge bg-secondary"><%= tipoUtilizador %></span></td>
             <td>
                 <!-- se ja esta validado, pode ser editado -->
                 <% if (validation == 1) { %>
