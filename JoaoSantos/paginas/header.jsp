@@ -4,17 +4,18 @@
 
 <%
     // contador do carrinho
-    int totalItens = 0;
+    int totalItens = 0; //numero de produtos no carrinho
+
     if (session.getAttribute("autenticado") != null) {
-        String userLogado = (String) session.getAttribute("utilizador");
+        int userLogado = (int) session.getAttribute("idUtilizador"); //id do utilizador logado
         if (conn != null) {
-            // soma a quantidade de itens no carrinho (estado 0)
+            // soma a quantidade de produtos da encomenda no carrinho
             String sql = "SELECT SUM(quantidade) FROM ITEM_ENCOMENDA i, ENCOMENDA e, UTILIZADOR u " +
                     "WHERE i.id_encomenda = e.id_encomenda " +
                     "AND e.id_utilizador = u.id_utilizador " +
-                    "AND u.username = ? AND e.estado = 0";
+                    "AND u.id_utilizador = ? AND e.estado = 0";
             PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, userLogado);
+            statement.setInt(1, userLogado);
             ResultSet result = statement.executeQuery();
 
             if (result.next()) {
@@ -78,6 +79,7 @@
             </ul>
         </div>
 
+        <%if (tipo == 3) { %>
         <!-- Carinho de compras -->
         <div class="d-flex">
             <a href="carrinho.jsp" class="btn btn-outline-success">
@@ -87,6 +89,7 @@
             </a>
         </div>
         <%
+                }
             }
         %>
     </div>

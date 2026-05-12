@@ -2,12 +2,12 @@
 <%@ include file="../basedados/basedados.h" %>
 
 <%
-    String idEncomenda = request.getParameter("id_enc");
+    String idEncomenda = request.getParameter("id_enc"); //recebe o id da encomenda a validar
 
     if (idEncomenda != null && conn != null) {
         int idEnc = Integer.parseInt(idEncomenda);
 
-        //calcula o valor total da encomenda
+        //soma o valor total da quantidade de cada produto da encomenda na tabela item_encomenda
         String sqlValor = "SELECT SUM(preco_unitario * quantidade) AS total_encomenda FROM ITEM_ENCOMENDA WHERE id_encomenda = ?";
         PreparedStatement statementValor = conn.prepareStatement(sqlValor);
         statementValor.setInt(1, idEnc);
@@ -15,10 +15,10 @@
 
         double valorFinal = 0;
         if (resultValor.next()) {
-            valorFinal = resultValor.getDouble("total_encomenda");
+            valorFinal = resultValor.getDouble("total_encomenda"); //acumula ao valor total da encomenda
         }
 
-        // guarda o valor calculado e muda o estado para 1
+        // guarda o valor total e muda o estado para 1(preparada/não validada)
         String sqlUpdate = "UPDATE ENCOMENDA SET valor_total = ?, estado = 1 WHERE id_encomenda = ?";
         PreparedStatement statementUpdate = conn.prepareStatement(sqlUpdate);
         statementUpdate.setDouble(1, valorFinal);

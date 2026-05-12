@@ -35,13 +35,14 @@
             }
         }
 
-        // adiciona o produto à encomenda (ITEM_ENCOMENDA)
-        // primeiro procuramos o preço atual para ficar registado
+
+        // procuramos o preço atual para ficar registado
         String sqlPreco = "SELECT preco FROM PRODUTO WHERE id_produto = ?";
         PreparedStatement precoAtual = conn.prepareStatement(sqlPreco);
         precoAtual.setInt(1, idProduto);
         ResultSet resultPreco = precoAtual.executeQuery();
 
+        // adiciona o produto à encomenda (ITEM_ENCOMENDA)
         if(resultPreco.next()){
             double precoActual = resultPreco.getDouble("preco");
 

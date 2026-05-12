@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
+<% // tipo de conta da sessão
+    Object tipoSessao = session.getAttribute("TipoConta");
+%>
+
 <%-- alerta de produto adicionado ao carrinho --%>
 <% if ("add".equals(request.getParameter("adicionado"))) { %>
 <div class="container mt-2">
@@ -50,7 +54,7 @@
             <h2 class="fw-bold text-success mb-0">Os Nossos Produtos</h2>
             <div class="small">
                 <span class="fw-bold me-2">Ordenar por:</span>
-                <!-- envia o valor da variavel(ordem) por get -->
+                <!-- botões de ordenação -->
                 <a href="pagina_principal.jsp?ordem=nome" class="btn btn-sm btn-outline-success">Nome</a>
                 <a href="pagina_principal.jsp?ordem=barato" class="btn btn-sm btn-outline-success">Mais Barato</a>
                 <a href="pagina_principal.jsp?ordem=caro" class="btn btn-sm btn-outline-success">Mais Caro</a>
@@ -61,7 +65,7 @@
 
             <%
                 if (conn != null) {
-                    // recebe a variavel(ordem) com o tipo de ordenação escolhido
+                    //tipo de ordenação escolhido
                     String ordem = request.getParameter("ordem");
 
                     String sql = "SELECT * FROM PRODUTO ORDER BY nome ASC";
@@ -91,11 +95,15 @@
                         <p class="small text-muted text-truncate"><%= result.getString("descricao") %></p>
                         <span class="text-success fw-bold fs-5"><%= result.getBigDecimal("preco") %>€</span>
                     </div>
+                    <%if (tipoSessao != null && (int)tipoSessao == 3) { %> <!-- apenas o cliente pode adicionar produtos -->
+                    <!-- botão de adicionar produto ao carrinho, envia o id do produto-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                         <div class="text-center">
-                            <a class="btn btn-success mt-auto" href="adicionar_carrinho.jsp?id=<%= result.getInt("id_produto") %>">Adicionar</a>
+                            <a class="btn btn-success mt-auto"
+                               href="adicionar_carrinho.jsp?id=<%= result.getInt("id_produto") %>">Adicionar</a>
                         </div>
                     </div>
+                    <%} %>
                 </div>
             </div>
             <%

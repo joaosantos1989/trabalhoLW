@@ -9,6 +9,19 @@
         id = request.getParameter("id"); //id do utilizador recebido
 
         // --- Ações ---
+        //aprovar um utilizador a usar o site
+        if("aprovar_utilizador".equals(secao) && id != null){
+            int idParaAprovar = Integer.parseInt(id);
+
+            String sqlAprove = "UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?";
+            PreparedStatement statementAprove = conn.prepareStatement(sqlAprove);
+            statementAprove.setInt(1, idParaAprovar);
+            statementAprove.executeUpdate();
+
+            out.println("<div class='alert alert-success'>Utilizador aprovado com sucesso!</div>");
+            response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
+        }
+
         if ("remover".equals(acao) && id != null) {
             int idParaApagar = Integer.parseInt(id);
 

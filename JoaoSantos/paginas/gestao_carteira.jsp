@@ -69,7 +69,7 @@
             registaMov.setInt(2, 2); // retirar
         }
 
-        registaMov.setInt(3, Integer.parseInt(idCartGerir)); // Quem fez a alteração
+        registaMov.setInt(3, idLogado); // Quem fez a alteração
         registaMov.setInt(4, Integer.parseInt(idCartGerir)); // A carteira que recebeu
         registaMov.executeUpdate();
 

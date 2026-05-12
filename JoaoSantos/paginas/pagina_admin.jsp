@@ -6,7 +6,7 @@
     Object autenticado = session.getAttribute("autenticado");
     Object tipoConta = session.getAttribute("TipoConta");
 
-    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
+    if (autenticado == null || tipoConta == null) {
         // Se não for admin, expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página

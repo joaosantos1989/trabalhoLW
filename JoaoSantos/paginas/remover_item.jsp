@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
-<%@ include file="header.jsp" %>
+<%@ include file="../basedados/basedados.h" %>
 
 <%
-    String idItemRecebido = request.getParameter("id_item");
+    String idItemRecebido = request.getParameter("id_item");//recebe o id do produto do carrinho
 
     if (idItemRecebido != null && conn != null) {
         int idItem = Integer.parseInt(idItemRecebido);
