@@ -23,7 +23,7 @@ VALUES ('funcionario', 'funcionario@felixubershop.pt', MD5('funcionario'), 2, 1)
 
 -- cliente
 INSERT INTO UTILIZADOR (username, email, password, tipoContaId, validation)
-VALUES ('cliente', 'cliente@felixubershop.pt', MD5('cliente'), 3, 2);
+VALUES ('cliente', 'cliente@felixubershop.pt', MD5('cliente'), 3, 1);
 
 -- felixubershop(loja)
 INSERT INTO UTILIZADOR (username, email, password, tipoContaId, validation)
@@ -39,14 +39,6 @@ CREATE TABLE CARTEIRA (
 
     FOREIGN KEY (id_utilizador) REFERENCES UTILIZADOR(id_utilizador)
 );
-
--- carteira admin
-INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
-VALUES (1, 100.00, 1);
-
--- carteira funcionario
-INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
-VALUES (2, 100.00, 1);
 
 -- carteira cliente
 INSERT INTO CARTEIRA (id_utilizador, saldo, tipoCarteiraId)
@@ -69,11 +61,6 @@ CREATE TABLE MOVIMENTO_CARTEIRA (
     FOREIGN KEY (id_carteira_origem) REFERENCES CARTEIRA(id_carteira),
     FOREIGN KEY (id_carteira_destino) REFERENCES CARTEIRA(id_carteira)
 );
-
--- movimento teste
-INSERT INTO MOVIMENTO_CARTEIRA (data_hora, valor, tipoOperacaoId, id_carteira_origem, id_carteira_destino)
-VALUES ('2026-04-25 12:02:00', 20, 1, 2, 1);
-
 
 -- Tabela PROMOCAO
 CREATE TABLE PROMOCAO (
@@ -103,11 +90,6 @@ CREATE TABLE ENCOMENDA (
 
     FOREIGN KEY (id_utilizador) REFERENCES UTILIZADOR(id_utilizador)
 );
-
--- encomenda teste
-INSERT INTO ENCOMENDA (id_utilizador, data_hora, valor_total, estado)
-VALUES (1, '2026-04-25 12:02:00', 35.25, 1);
-
 
 -- Tabela PRODUTO
 CREATE TABLE PRODUTO (
@@ -154,6 +136,3 @@ CREATE TABLE ITEM_ENCOMENDA
     FOREIGN KEY (id_encomenda) REFERENCES ENCOMENDA (id_encomenda),
     FOREIGN KEY (id_produto) REFERENCES PRODUTO (id_produto)
 );
-
-INSERT INTO ITEM_ENCOMENDA (id_encomenda, id_produto, quantidade, preco_unitario)
-VALUES (1, 1, 1, 1.00);

@@ -47,7 +47,7 @@
         <%
             } else if ("carteira".equals(secao) || "gestao_carteira".equals(secao)) {
         %>
-        <%@ include file="gerir_carteiras.jsp" %>
+        <%@ include file="gerir_carteiras.jsp" %> <!-- gestão de carteiras-->
 
         <%
             } else if ("alertas".equals(secao)) {

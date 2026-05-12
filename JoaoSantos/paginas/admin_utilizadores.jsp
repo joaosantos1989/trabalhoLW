@@ -6,29 +6,35 @@
     <%
         secao = request.getParameter("secao"); //utilizadores/editar_utilizador/aprovar_utilizador
         acao = request.getParameter("acao"); //remover
-        id = request.getParameter("id"); //id do utilizador recebido nos gets
+        id = request.getParameter("id"); //id do utilizador recebido
 
         // --- Ações ---
-        if (conn != null) {
-            // remover utilizador da bd
-            if ("remover".equals(acao) && id != null) {
-                String sql = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
-                PreparedStatement clear = conn.prepareStatement(sql);
-                clear.setInt(1, Integer.parseInt(id));
-                clear.executeUpdate();
-                out.println("<div class='alert alert-danger'>Utilizador removido!</div>");
-                response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
-            }
+        if ("remover".equals(acao) && id != null) {
+            int idParaApagar = Integer.parseInt(id);
 
-            // aprovar_utilizador
-            if ("aprovar_utilizador".equals(secao) && id != null) {
-                String sql = "UPDATE UTILIZADOR SET validation = 1 WHERE id_utilizador = ?";
-                PreparedStatement aprove = conn.prepareStatement(sql);
-                aprove.setInt(1, Integer.parseInt(id));
-                aprove.executeUpdate();
-                out.println("<div class='alert alert-success'>Utilizador aprovado!</div>");
-                response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
-            }
+            // Usamos um subquery para encontrar a carteira do utilizador e apagar os movimentos dela
+            String sqlMov = "DELETE FROM movimento_carteira WHERE " +
+                    "id_carteira_origem IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?) OR " +
+                    "id_carteira_destino IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?)";
+            PreparedStatement clearMov = conn.prepareStatement(sqlMov);
+            clearMov.setInt(1, idParaApagar);
+            clearMov.setInt(2, idParaApagar);
+            clearMov.executeUpdate();
+
+            // apaga a Carteira
+            String sqlCart = "DELETE FROM carteira WHERE id_utilizador = ?";
+            PreparedStatement clearCart = conn.prepareStatement(sqlCart);
+            clearCart.setInt(1, idParaApagar);
+            clearCart.executeUpdate();
+
+            // apaga o utilizador
+            String sqlUser = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
+            PreparedStatement clearUser = conn.prepareStatement(sqlUser);
+            clearUser.setInt(1, idParaApagar);
+            clearUser.executeUpdate();
+
+            out.println("<div class='alert alert-danger'>Utilizador removido!</div>");
+            response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
         }
 
         // --- Interface ---
@@ -52,9 +58,8 @@
         <% //vamos buscar o tipoConta de utilizador, se esta validado e o id
             Statement statement = conn.createStatement();
             String sql = "SELECT u.id_utilizador, u.username, u.validation, u.tipoContaID " +
-                    "FROM utilizador u, carteira c " +
-                    "WHERE u.id_utilizador = c.id_utilizador " +
-                    "AND c.tipoCarteiraID != 2 "; //o nome da loja não aparece
+                    "FROM utilizador u " +
+                    "WHERE u.username != 'felixubershop' "; //o nome da loja não aparece
 
             ResultSet result = statement.executeQuery(sql);
             while (result.next()) {
@@ -73,7 +78,7 @@
         %>
         <tr> <!-- apresentamos o nome do utilizador na coluna nome -->
             <td><%= result.getString("username") %></td>
-            <!-- badge = etiqueta arredondada, apresenta o tipoConta de utilizador na coluna tipoConta -->
+            <!-- tipoConta de utilizador -->
             <td><span class="badge bg-secondary"><%= tipoUtilizador %></span></td>
             <td>
                 <!-- se ja esta validado, pode ser editado -->
@@ -88,7 +93,7 @@
             </td>
         </tr>
         <%
-            } //fim do while
+            }
         %>
         </tbody>
     </table>

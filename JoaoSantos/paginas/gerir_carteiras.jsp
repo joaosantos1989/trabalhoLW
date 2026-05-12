@@ -35,30 +35,20 @@
         <%
             if (conn != null) {
                 // procuramos os utilizadores e o seu saldo
-                String sql = "SELECT u.id_utilizador, u.username, c.saldo, c.tipoCarteiraID " +
-                        "FROM utilizador u, carteira c " +
-                        "WHERE u.id_utilizador = c.id_utilizador";
+                String sql = "SELECT u.id_utilizador, u.username, c.saldo, c.tipoCarteiraID, c.id_carteira " +
+                        "FROM utilizador u JOIN carteira c ON u.id_utilizador = c.id_utilizador ";
 
                 Statement statementSaldo = conn.createStatement();
                 ResultSet resultSaldo = statementSaldo.executeQuery(sql);
 
                 while(resultSaldo.next()) {
-                    int tipoCart = resultSaldo.getInt("tipoCarteiraID");
         %>
         <tr>
-            <td>
-                <strong><%= resultSaldo.getString("username") %></strong>
-                <%-- Se for a carteira tipoConta 2, da loja--%>
-                <% if (tipoCart == 2) { %>
-                <span class="badge bg-warning text-dark">LOJA</span>
-                <% } %>
-            </td>
+            <td><strong><%= resultSaldo.getString("username") %></strong></td>
             <td class="text-success fw-bold"><%= resultSaldo.getDouble("saldo") %>€</td>
-            <td class="text-center">
-                <a href="pagina_admin.jsp?secao=gestao_carteira&id=<%= resultSaldo.getInt("id_utilizador") %>"
-                   class="btn btn-sm btn-outline-primary">
-                    ⚙️ Gerir Carteira
-                </a>
+            <td class="text-center"> <!-- envia id do utilizador e id carteira -->
+                <a href="pagina_admin.jsp?secao=gestao_carteira&id=<%= resultSaldo.getInt("id_utilizador") %>&id_cart=<%= resultSaldo.getInt("id_carteira") %>"
+                   class="btn btn-sm btn-outline-primary">⚙️ Gerir</a>
             </td>
         </tr>
         <%
