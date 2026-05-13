@@ -3,7 +3,7 @@
 <%@ include file="../basedados/basedados.h" %>
 
 <%
-    //Recebe os dados do formulário
+    //recebe os dados do formulário
     String utilizador = request.getParameter("username");
     String pass = request.getParameter("password");
 
@@ -14,7 +14,6 @@
                     "LEFT JOIN carteira c ON u.id_utilizador = c.id_utilizador " +
                     "WHERE u.username = ? AND u.password = MD5(?)";
 
-            //Ao usar setString(), a base de dados é forçada a tratar o conteúdo destas variáveis estritamente como texto normal, nunca como código SQL executável.
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, utilizador);
             statement.setString(2, pass);

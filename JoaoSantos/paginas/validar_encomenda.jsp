@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*" %>
 
 <%
-    // --- 1. Segurança de Login ---
+    // ---segurança de Login ---
     Object autenticado = session.getAttribute("autenticado");
     Object tipoConta = session.getAttribute("TipoConta");
 
@@ -11,19 +11,18 @@
         return;
     }
 
-    // --- 2. Definir página de retorno (Admin ou Funcionário) ---
+    // --- pagina de utilizador a voltar  ---
     int tipoLogado = (int)tipoConta;
-    String pagVolta = (tipoLogado == 1) ? "pagina_admin.jsp?secao=encomendas" : "pagina_funcionario.jsp?secao=encomendas";
+    String pagVolta = (tipoLogado == 1) ? "pagina_admin.jsp?secao=encomendas" : (tipoLogado == 2) ? "pagina_funcionario.jsp?secao=encomendas" : "pagina_cliente.jsp?secao=encomendas";
 
     String idEncRecebido = request.getParameter("id_enc");
 
     if (idEncRecebido != null && conn != null) {
         int idEnc = Integer.parseInt(idEncRecebido);
 
-        // --- 3. Apenas mudar o estado da encomenda ---
-        // Como o dinheiro já foi retirado no "preparar_encomenda.jsp",
-        // aqui o Admin apenas confirma que a encomenda foi finalizada/enviada.
-        String sqlValida = "UPDATE ENCOMENDA SET estado = 2 WHERE id_encomenda = ?";
+        // --- mudar o estado da encomenda ---
+        // o admin apenas confirma que a encomenda foi validada.
+        String sqlValida = "UPDATE ENCOMENDA SET estado = 2 WHERE id_encomenda = ?"; //encomenda validada
         PreparedStatement statementValida = conn.prepareStatement(sqlValida);
         statementValida.setInt(1, idEnc);
         statementValida.executeUpdate();

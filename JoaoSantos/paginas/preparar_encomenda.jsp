@@ -3,7 +3,7 @@
 <%@ include file="../basedados/basedados.h" %>
 
 <%
-    // --- 1. Segurança de Login ---
+    // --- segurança de Login ---
     Object autenticado = session.getAttribute("autenticado");
     Object tipoConta = session.getAttribute("TipoConta");
 
@@ -12,95 +12,91 @@
         return;
     }
 
-    // --- 2. Obter dados da Sessão ---
+    // --- dados da sessão ---
     int idLogado = (int) session.getAttribute("idUtilizador");
     int idCartLogada = (int) session.getAttribute("idCarteira");
     String idEncomenda = request.getParameter("id_enc");
 
     if (idEncomenda != null && conn != null) {
-        try {
-            int idEnc = Integer.parseInt(idEncomenda);
+        int idEnc = Integer.parseInt(idEncomenda);
 
-            // --- 3. Calcular o valor total real da encomenda ---
-            // Fazemos a soma diretamente da base de dados para evitar manipulações
-            String sqlValor = "SELECT SUM(preco_unitario * quantidade) AS total_encomenda FROM ITEM_ENCOMENDA WHERE id_encomenda = ?";
-            PreparedStatement psValor = conn.prepareStatement(sqlValor);
-            psValor.setInt(1, idEnc);
-            ResultSet rsValor = psValor.executeQuery();
+        // --- procura e calcula o valor total real da encomenda ---
+        String sqlValor = "SELECT SUM(preco_unitario * quantidade) AS total_encomenda FROM ITEM_ENCOMENDA WHERE id_encomenda = ?";
+        PreparedStatement statementValor = conn.prepareStatement(sqlValor);
+        statementValor.setInt(1, idEnc);
+        ResultSet resultValor = statementValor.executeQuery();
 
-            double totalEnc = 0;
-            if (rsValor.next()) {
-                totalEnc = rsValor.getDouble("total_encomenda");
-            }
-            rsValor.close();
-            psValor.close();
-
-            // --- 4. Verificar o saldo do cliente antes de cobrar ---
-            String sqlSaldo = "SELECT saldo FROM CARTEIRA WHERE id_carteira = ?";
-            PreparedStatement psSaldo = conn.prepareStatement(sqlSaldo);
-            psSaldo.setInt(1, idCartLogada);
-            ResultSet rsSaldo = psSaldo.executeQuery();
-
-            if (rsSaldo.next()) {
-                double saldoAtual = rsSaldo.getDouble("saldo");
-
-                if (saldoAtual >= totalEnc && totalEnc > 0) {
-                    // --- SUCESSO: REALIZAR O PAGAMENTO IMEDIATO ---
-
-                    // A) Retirar dinheiro ao Cliente
-                    String sqlRetira = "UPDATE CARTEIRA SET saldo = saldo - ? WHERE id_carteira = ?";
-                    PreparedStatement psRetira = conn.prepareStatement(sqlRetira);
-                    psRetira.setDouble(1, totalEnc);
-                    psRetira.setInt(2, idCartLogada);
-                    psRetira.executeUpdate();
-
-                    // B) Depositar na conta da Loja (tipoCarteiraId = 2)
-                    String sqlLoja = "UPDATE CARTEIRA SET saldo = saldo + ? WHERE tipoCarteiraId = 2";
-                    PreparedStatement psLoja = conn.prepareStatement(sqlLoja);
-                    psLoja.setDouble(1, totalEnc);
-                    psLoja.executeUpdate();
-
-                    // C) Obter ID da carteira da loja para o Histórico de Movimentos
-                    int idCartLoja = 0;
-                    Statement stL = conn.createStatement();
-                    ResultSet rsL = stL.executeQuery("SELECT id_carteira FROM CARTEIRA WHERE tipoCarteiraId = 2");
-                    if (rsL.next()) {
-                        idCartLoja = rsL.getInt("id_carteira");
-                    }
-
-                    // D) Registar Movimento (Tipo 3 = Encomenda Paga)
-                    String sqlReg = "INSERT INTO movimento_carteira (data_hora, valor, tipoOperacaoId, id_carteira_origem, id_carteira_destino) " +
-                            "VALUES (NOW(), ?, 3, ?, ?)";
-                    PreparedStatement psReg = conn.prepareStatement(sqlReg);
-                    psReg.setDouble(1, totalEnc);
-                    psReg.setInt(2, idCartLogada); // Origem: Cliente
-                    psReg.setInt(3, idCartLoja);   // Destino: Loja
-                    psReg.executeUpdate();
-
-                    // E) Finalizar Encomenda (Estado 1 = Paga/Pendente de Validação)
-                    String sqlUpdateEnc = "UPDATE ENCOMENDA SET valor_total = ?, estado = 1 WHERE id_encomenda = ?";
-                    PreparedStatement psUpd = conn.prepareStatement(sqlUpdateEnc);
-                    psUpd.setDouble(1, totalEnc);
-                    psUpd.setInt(2, idEnc);
-                    psUpd.executeUpdate();
-
-                    // Redireciona com SUCESSO
-                    response.sendRedirect("carrinho.jsp?msg=pendente");
-                    return;
-
-                } else {
-                    // ERRO: Saldo insuficiente
-                    response.sendRedirect("carrinho.jsp?msg=erro_saldo");
-                    return;
-                }
-            }
-            rsSaldo.close();
-            psSaldo.close();
-
-        } catch (Exception e) {
-            // Em caso de erro técnico, volta para o carrinho
-            out.println("Erro ao processar: " + e.getMessage());
+        double totalEnc = 0;
+        if (resultValor.next()) { //se houver encomenda guarda o valor
+            totalEnc = resultValor.getDouble("total_encomenda");
         }
+        resultValor.close();
+        statementValor.close();
+
+        // --- verifica o saldo do cliente antes de cobrar ---
+        String sqlSaldo = "SELECT saldo FROM CARTEIRA WHERE id_carteira = ?";
+        PreparedStatement statementSaldo = conn.prepareStatement(sqlSaldo);
+        statementSaldo.setInt(1, idCartLogada);
+        ResultSet resultSaldo = statementSaldo.executeQuery();
+
+        if (resultSaldo.next()) {
+            double saldoAtual = resultSaldo.getDouble("saldo");
+
+            if (saldoAtual >= totalEnc && totalEnc > 0) { //se o saldo for maior ou igual que a encomenda
+                // pagamento
+
+                // retira dinheiro ao cliente
+                String sqlRetira = "UPDATE CARTEIRA SET saldo = saldo - ? WHERE id_carteira = ?";
+                PreparedStatement statementRetira = conn.prepareStatement(sqlRetira);
+                statementRetira.setDouble(1, totalEnc);
+                statementRetira.setInt(2, idCartLogada);
+                statementRetira.executeUpdate();
+
+                // deposita na conta da loja (tipoCarteiraId = 2)
+                String sqlLoja = "UPDATE CARTEIRA SET saldo = saldo + ? WHERE tipoCarteiraId = 2";
+                PreparedStatement statementLoja = conn.prepareStatement(sqlLoja);
+                statementLoja.setDouble(1, totalEnc);
+                statementLoja.executeUpdate();
+
+                // obtem o id da carteira da loja para o histórico de movimentos
+                int idCartLoja = 0;
+                String sql = "SELECT id_carteira FROM CARTEIRA WHERE tipoCarteiraId = 2";
+                Statement statmentLoja = conn.createStatement();
+                ResultSet resultLoja = statmentLoja.executeQuery(sql);
+
+                if (resultLoja.next()) {
+                    idCartLoja = resultLoja.getInt("id_carteira");
+                }
+
+                // regista o movimento (Tipo 3 = Encomenda Paga)
+                String sqlReg = "INSERT INTO movimento_carteira (data_hora, valor, tipoOperacaoId, id_carteira_origem, id_carteira_destino) " +
+                        "VALUES (NOW(), ?, 3, ?, ?)";
+                PreparedStatement statmentReg = conn.prepareStatement(sqlReg);
+                statmentReg.setDouble(1, totalEnc);
+                statmentReg.setInt(2, idCartLogada); // origem, cliente
+                statmentReg.setInt(3, idCartLoja);   // destino, loja
+                statmentReg.executeUpdate();
+
+                // finaliza encomenda (estado 1 = Paga/Pendente de Validação)
+                String sqlUpdateEnc = "UPDATE ENCOMENDA SET valor_total = ?, estado = 1 WHERE id_encomenda = ?";
+                PreparedStatement stamentUpdate = conn.prepareStatement(sqlUpdateEnc);
+                stamentUpdate.setDouble(1, totalEnc);
+                stamentUpdate.setInt(2, idEnc);
+                stamentUpdate.executeUpdate();
+
+                // redireciona com sucesso
+                response.sendRedirect("carrinho.jsp?msg=pendente");
+                return;
+
+            } else {
+                // saldo insuficiente
+                response.sendRedirect("carrinho.jsp?msg=erro_saldo");
+                return;
+            }
+        }
+        resultSaldo.close();
+        statementSaldo.close();
+
     } else {
         response.sendRedirect("carrinho.jsp");
     }

@@ -10,14 +10,14 @@
     }
 %>
 
-<!-- logica dos botões de controlo -->
+<!-- botões de controlo -->
 <div class="bg-white p-4 rounded shadow-sm border">
     <%
         secao = request.getParameter("secao"); //utilizadores/editar_utilizador/aprovar_utilizador
         acao = request.getParameter("acao"); //remover
         id = request.getParameter("id"); //id do utilizador recebido
 
-        // --- Ações ---
+        // --- ações ---
         //aprovar um utilizador a usar o site
         if("aprovar_utilizador".equals(secao) && id != null){
             int idParaAprovar = Integer.parseInt(id);
@@ -34,20 +34,19 @@
         if ("remover".equals(acao) && id != null) {
             int idParaApagar = Integer.parseInt(id);
 
-            // 1. Apagar os ITENS das encomendas do utilizador (os "netos")
-            // Precisamos de um subquery para saber quais encomendas pertencem a este utilizador
+            // apaga os itens das encomendas do utilizador
             String sqlItens = "DELETE FROM item_encomenda WHERE id_encomenda IN (SELECT id_encomenda FROM encomenda WHERE id_utilizador = ?)";
             PreparedStatement clearItens = conn.prepareStatement(sqlItens);
             clearItens.setInt(1, idParaApagar);
             clearItens.executeUpdate();
 
-            // 2. Apagar as ENCOMENDAS do utilizador (os "filhos")
+            // apaga as encomendas do utilizador
             String sqlEnc = "DELETE FROM encomenda WHERE id_utilizador = ?";
             PreparedStatement clearEnc = conn.prepareStatement(sqlEnc);
             clearEnc.setInt(1, idParaApagar);
             clearEnc.executeUpdate();
 
-            // 3. Apagar os MOVIMENTOS de carteira (origem ou destino)
+            // apagar os movimentos de carteira (origem ou destino)
             String sqlMov = "DELETE FROM movimento_carteira WHERE " +
                     "id_carteira_origem IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?) OR " +
                     "id_carteira_destino IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?)";
@@ -56,13 +55,13 @@
             clearMov.setInt(2, idParaApagar);
             clearMov.executeUpdate();
 
-            // 4. Apagar a CARTEIRA
+            // apaga a carteira
             String sqlCart = "DELETE FROM carteira WHERE id_utilizador = ?";
             PreparedStatement clearCart = conn.prepareStatement(sqlCart);
             clearCart.setInt(1, idParaApagar);
             clearCart.executeUpdate();
 
-            // 5. POR FIM, apagar o UTILIZADOR
+            // apaga o utilizador
             String sqlUser = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
             PreparedStatement clearUser = conn.prepareStatement(sqlUser);
             clearUser.setInt(1, idParaApagar);
@@ -72,7 +71,7 @@
             response.setHeader("Refresh", "1; URL=pagina_admin.jsp?secao=utilizadores");
         }
 
-        // --- Interface ---
+        // --- interface ---
 
         // secao utilizadores, apresenta a tabela com os utilizadores da bd
         if ("utilizadores".equals(secao) || secao == null) {
