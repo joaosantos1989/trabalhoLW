@@ -1,58 +1,79 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../basedados/basedados.h" %>
 <%@ page import="java.sql.*" %>
 
 <%
-    // --- segurança de login ---
+    // --- 1. Segurança de Login ---
     Object autenticado = session.getAttribute("autenticado");
     Object tipoConta = session.getAttribute("TipoConta");
 
     if (autenticado == null || tipoConta == null) {
-        // expulsa para o login
-        response.sendRedirect("login.jsp?needLogin=acesso_negado");
-        return; // Interrompe a página
+        response.sendRedirect("login.jsp");
+        return;
     }
-%>
 
-<%
-    String idEncomenda = request.getParameter("id_enc");
+    // Definir para onde voltar (Admin ou Funcionário)
+    int tipoLogado = (int)tipoConta;
+    String pagVolta = (tipoLogado == 1) ? "pagina_admin.jsp?secao=encomendas" : "pagina_funcionario.jsp?secao=encomendas";
 
-    // identificar quem está logado
-    int tipoUser = (int) tipoConta;
-    int idLogado = Integer.parseInt(session.getAttribute("idUtilizador").toString());
+    String idEncRecebido = request.getParameter("id_enc");
 
-    if (idEncomenda != null && conn != null) {
-        int idEnc = Integer.parseInt(idEncomenda);
+    if (idEncRecebido != null && conn != null) {
+        int idEnc = Integer.parseInt(idEncRecebido);
 
-        if (tipoUser == 3) { //se for o cliente
-            // primeiro apagamos os itens (senão a BD dá erro de chave estrangeira)
-            String sqlItens = "DELETE FROM ITEM_ENCOMENDA WHERE id_encomenda = ?";
-            PreparedStatement statement1 = conn.prepareStatement(sqlItens);
-            statement1.setInt(1, idEnc);
-            statement1.executeUpdate();
+        // --- 2. Procurar dados da encomenda ---
+        // Precisamos do ID do cliente e do valor para devolver
+        String sqlEnc = "SELECT id_utilizador, valor_total, estado FROM ENCOMENDA WHERE id_encomenda = ?";
+        PreparedStatement psEnc = conn.prepareStatement(sqlEnc);
+        psEnc.setInt(1, idEnc);
+        ResultSet rsEnc = psEnc.executeQuery();
 
-            // depois apagamos a encomenda (apenas se for do próprio cliente)
-            String sqlEnc = "DELETE FROM ENCOMENDA WHERE id_encomenda = ? AND id_utilizador = ?";
-            PreparedStatement statement2 = conn.prepareStatement(sqlEnc);
-            statement2.setInt(1, idEnc);
-            statement2.setInt(2, idLogado);
-            statement2.executeUpdate();
+        if (rsEnc.next()) {
+            int idCliente = rsEnc.getInt("id_utilizador");
+            double total = rsEnc.getDouble("valor_total");
+            int estadoAtual = rsEnc.getInt("estado");
 
-            response.sendRedirect("pagina_cliente.jsp?secao=encomendas&msg=cancelada");
+            // SÓ CANCELA SE ESTIVER PAGA (Estado 1)
+            if (estadoAtual == 1) {
 
-        } else {
-            // se for admin/funcionario muda o estado para
+                // A) Devolve dinheiro ao cliente
+                PreparedStatement psCli = conn.prepareStatement("UPDATE CARTEIRA SET saldo = saldo + ? WHERE id_utilizador = ?");
+                psCli.setDouble(1, total);
+                psCli.setInt(2, idCliente);
+                psCli.executeUpdate();
 
-            String sqlUpdate = "UPDATE ENCOMENDA SET estado = 3 WHERE id_encomenda = ?";
-            PreparedStatement statement3 = conn.prepareStatement(sqlUpdate);
-            statement3.setInt(1, idEnc);
-            statement3.executeUpdate();
+                // B) Retira dinheiro à Loja (tipoCarteiraId = 2)
+                PreparedStatement psLoja = conn.prepareStatement("UPDATE CARTEIRA SET saldo = saldo - ? WHERE tipoCarteiraId = 2");
+                psLoja.setDouble(1, total);
+                psLoja.executeUpdate();
 
-            if (tipoUser == 1) {
-                response.sendRedirect("pagina_admin.jsp?secao=encomendas&msg=cancelada");
-            } else {
-                response.sendRedirect("pagina_funcionario.jsp?secao=encomendas&msg=cancelada");
+                // C) REGISTAR O MOVIMENTO (ID 4 = Encomenda Cancelada)
+                // Vamos buscar os IDs das carteiras para o registo
+                int idLoja = 0;
+                int idCartCli = 0;
+
+                ResultSet rsL = conn.createStatement().executeQuery("SELECT id_carteira FROM CARTEIRA WHERE tipoCarteiraId = 2");
+                if(rsL.next()) idLoja = rsL.getInt(1);
+
+                ResultSet rsC = conn.createStatement().executeQuery("SELECT id_carteira FROM CARTEIRA WHERE id_utilizador = " + idCliente);
+                if(rsC.next()) idCartCli = rsC.getInt(1);
+
+                // No movimento de cancelamento: Origem é a LOJA, Destino é o CLIENTE
+                String sqlReg = "INSERT INTO movimento_carteira (data_hora, valor, tipoOperacaoId, id_carteira_origem, id_carteira_destino) VALUES (NOW(), ?, 4, ?, ?)";
+                PreparedStatement psReg = conn.prepareStatement(sqlReg);
+                psReg.setDouble(1, total);
+                psReg.setInt(2, idLoja);       // Sai da loja
+                psReg.setInt(3, idCartCli);    // Entra no cliente
+                psReg.executeUpdate();
+
+                // D) Muda o estado da encomenda para 3 (Cancelada)
+                PreparedStatement psFim = conn.prepareStatement("UPDATE ENCOMENDA SET estado = 3 WHERE id_encomenda = ?");
+                psFim.setInt(1, idEnc);
+                psFim.executeUpdate();
+
+                response.sendRedirect(pagVolta + "&msg=cancelada_ok");
+                return;
             }
         }
     }
+    response.sendRedirect(pagVolta + "&msg=erro");
 %>

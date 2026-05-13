@@ -16,25 +16,27 @@
     int tipoLogado = (int) tipoConta;
     int idCartLogada = (int) session.getAttribute("idCarteira");
 
-    // id recebidos do utilizador a gerir
+    // id recebidos do utilizador a gerir pelo admin/funcionario
     String idUserGerir = request.getParameter("id");
     String idCartGerir = request.getParameter("id_cart");
 
     // se não foi recebido nenhum id, usa o proprio porque é o cliente a gerir a sua carteira
     if (idUserGerir == null) {
-        idUserGerir = String.valueOf(idLogado);
+        idUserGerir = String.valueOf(idLogado); //id de utilizador do cliente a gerir a sua carteira
+        idCartGerir = String.valueOf(idCartLogada); //id da carteira do cliente a gerir a sua carteira
     }
 
-    // procuramos o id da carteira
-    if (idCartGerir == null) {
-        String sqlProcura = "SELECT id_carteira FROM carteira WHERE id_utilizador = ?";
-        PreparedStatement statementProcura = conn.prepareStatement(sqlProcura);
-        statementProcura.setInt(1, Integer.parseInt(idUserGerir.trim()));
-        ResultSet resultProcura = statementProcura.executeQuery();
-
-        if (resultProcura.next()) {
-            idCartGerir = String.valueOf(resultProcura.getInt("id_carteira"));
+    // se o id_cart não veio link, vamos buscá-lo à BD
+    if (idCartGerir == null || idCartGerir.trim().isEmpty() || idCartGerir.equals("0")) {
+        String sqlSearch = "SELECT id_carteira FROM carteira WHERE id_utilizador = ?";
+        PreparedStatement statementSearch = conn.prepareStatement(sqlSearch);
+        statementSearch.setInt(1, Integer.parseInt(idUserGerir.trim()));
+        ResultSet resultSearch = statementSearch.executeQuery();
+        if (resultSearch.next()) {
+            idCartGerir = String.valueOf(resultSearch.getInt("id_carteira"));
         }
+        resultSearch.close();
+        statementSearch.close();
     }
 
     // volta para a pagina do utilizador a gerir a carteira
@@ -51,8 +53,8 @@
     // formulario
     if ("POST".equalsIgnoreCase(request.getMethod())) {
 
-        double valor = Double.parseDouble(request.getParameter("valor"));
-        String operacao = request.getParameter("operacao");
+        double valor = Double.parseDouble(request.getParameter("valor")); //valor do dinheiro a ser movimentado
+        String operacao = request.getParameter("operacao"); //tipo de operação, adicionar/retirar
         double valorFinal = 0;
 
         if (operacao.equals("retirar")) {
@@ -79,16 +81,15 @@
             registaMov.setInt(2, 2); // retirar
         }
 
-        // se o Admin/Loja não tiver carteira (idCartLogada == 0),
-        // usamos a própria carteira que está a receber o dinheiro como origem.
-        int origemFinal = idCartLogada;
-        if (origemFinal == 0) {
-            origemFinal = Integer.parseInt(idCartGerir.trim());
+        // se for o admin ou funcionario usa a carteira da loja
+        int cartOrigem = idCartLogada;
+        if (cartOrigem == 0) {
+            cartOrigem = 2; //id da carteira da loja
         }
 
         // USAR IDs DE CARTEIRAS
-        registaMov.setInt(3, origemFinal); // Origem: ID da carteira de quem está logado
-        registaMov.setInt(4, Integer.parseInt(idCartGerir.trim())); // Destino: ID da carteira gerida
+        registaMov.setInt(3, cartOrigem); // origem, ID da carteira de quem está logado
+        registaMov.setInt(4, Integer.parseInt(idCartGerir.trim())); // destino, ID da carteira gerida
         registaMov.executeUpdate();
 
         // Enviar de volta com mensagem de sucesso
@@ -127,7 +128,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Confirmar Alteração</button>
-            <a href="<%= pagVolta %>" class="btn btn-link w-100 mt-2">← Voltar</a>
+            <a href="<%= pagVolta %>" class="btn btn-link w-100 mt-2">Voltar</a>
         </form>
     </div>
 </div>

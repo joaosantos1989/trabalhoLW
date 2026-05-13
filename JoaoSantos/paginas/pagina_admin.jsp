@@ -50,11 +50,6 @@
         <%@ include file="gerir_carteiras.jsp" %> <!-- gestão de carteiras-->
 
         <%
-            } else if ("alertas".equals(secao)) {
-        %>
-            <div class="alert alert-info"> Seção <%=secao%> (Em construção).</div> <!-- gestão de alertas -->
-
-        <%
             } else if ("registos".equals(secao)) {
         %>
         <%@ include file="admin_registos.jsp" %> <!-- gestão de movimentos -->

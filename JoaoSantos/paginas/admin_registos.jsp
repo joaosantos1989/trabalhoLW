@@ -8,9 +8,7 @@
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
     }
-%>
 
-<%
     // nome do utilizador na barra de pesquisa
     String pesquisa = request.getParameter("txtPesquisa");
 %>
@@ -43,9 +41,9 @@
             if (conn != null) {
                 // procuramos nos nomes dos utilizadores de cada movimento
                 String sql = "SELECT m.*, u1.username AS nome1, u2.username AS nome2 " +
-                        "FROM movimento_carteira m, utilizador u1, utilizador u2 " +
-                        "WHERE m.id_carteira_origem = u1.id_utilizador " +
-                        "AND m.id_carteira_destino = u2.id_utilizador";
+                        "FROM movimento_carteira m, carteira c1, utilizador u1, carteira c2, utilizador u2 " +
+                        "WHERE m.id_carteira_origem = c1.id_carteira AND c1.id_utilizador = u1.id_utilizador " +
+                        "AND m.id_carteira_destino = c2.id_carteira AND c2.id_utilizador = u2.id_utilizador";
 
                 // se houver pesquisa, filtramos pelos nomes
                 if (pesquisa != null && !pesquisa.isEmpty()) {
@@ -65,6 +63,7 @@
                     if (tipoOperacao == 1) { nomeOperacao = "Saldo Adicionado"; }
                     else if (tipoOperacao == 2) { nomeOperacao = "Saldo Retirado"; }
                     else if (tipoOperacao == 3) { nomeOperacao = "Encomenda Paga"; }
+                    else if (tipoOperacao == 4) { nomeOperacao = "Encomenda Cancelada"; }
         %>
         <tr>
             <td>#<%= resultOrder.getInt("id_movimento") %></td>

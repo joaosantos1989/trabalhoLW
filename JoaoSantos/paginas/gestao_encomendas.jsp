@@ -35,6 +35,16 @@
 </div>
 <% } %>
 
+<%-- alerta de utilizador sem saldo suficiente--%>
+<% if ("erro_saldo".equals(request.getParameter("msg"))) { %>
+<div class="container mt-2">
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <strong>O utilizador não tem saldo suficiciente!</strong><br>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
 <div class="bg-white p-4 rounded shadow-sm border">
     <h2 class="text-primary border-bottom pb-2">📋 Gestão de Encomendas</h2>
 

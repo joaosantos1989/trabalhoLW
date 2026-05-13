@@ -34,7 +34,20 @@
         if ("remover".equals(acao) && id != null) {
             int idParaApagar = Integer.parseInt(id);
 
-            // Usamos um subquery para encontrar a carteira do utilizador e apagar os movimentos dela
+            // 1. Apagar os ITENS das encomendas do utilizador (os "netos")
+            // Precisamos de um subquery para saber quais encomendas pertencem a este utilizador
+            String sqlItens = "DELETE FROM item_encomenda WHERE id_encomenda IN (SELECT id_encomenda FROM encomenda WHERE id_utilizador = ?)";
+            PreparedStatement clearItens = conn.prepareStatement(sqlItens);
+            clearItens.setInt(1, idParaApagar);
+            clearItens.executeUpdate();
+
+            // 2. Apagar as ENCOMENDAS do utilizador (os "filhos")
+            String sqlEnc = "DELETE FROM encomenda WHERE id_utilizador = ?";
+            PreparedStatement clearEnc = conn.prepareStatement(sqlEnc);
+            clearEnc.setInt(1, idParaApagar);
+            clearEnc.executeUpdate();
+
+            // 3. Apagar os MOVIMENTOS de carteira (origem ou destino)
             String sqlMov = "DELETE FROM movimento_carteira WHERE " +
                     "id_carteira_origem IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?) OR " +
                     "id_carteira_destino IN (SELECT id_carteira FROM carteira WHERE id_utilizador = ?)";
@@ -43,13 +56,13 @@
             clearMov.setInt(2, idParaApagar);
             clearMov.executeUpdate();
 
-            // apaga a Carteira
+            // 4. Apagar a CARTEIRA
             String sqlCart = "DELETE FROM carteira WHERE id_utilizador = ?";
             PreparedStatement clearCart = conn.prepareStatement(sqlCart);
             clearCart.setInt(1, idParaApagar);
             clearCart.executeUpdate();
 
-            // apaga o utilizador
+            // 5. POR FIM, apagar o UTILIZADOR
             String sqlUser = "DELETE FROM UTILIZADOR WHERE id_utilizador = ?";
             PreparedStatement clearUser = conn.prepareStatement(sqlUser);
             clearUser.setInt(1, idParaApagar);

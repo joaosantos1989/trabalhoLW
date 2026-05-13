@@ -7,7 +7,7 @@
     String utilizador = request.getParameter("username");
     String pass = request.getParameter("password");
     String email = request.getParameter("email");
-    int tipoConta = Integer.parseInt(request.getParameter("tipoContaID"));
+    int tipoConta = Integer.parseInt(request.getParameter("tipoContaId"));
 
 
     if (conn != null) {

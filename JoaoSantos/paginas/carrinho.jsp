@@ -12,6 +12,26 @@
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
     }
+
+    int idUser = (int) session.getAttribute("idUtilizador");
+    int idCartLogada = (int) session.getAttribute("idCarteira");
+
+    double saldoAtual = 0;
+    double totalACalcular = 0;
+    int idDaEncomenda = 0;
+
+    if (conn != null) {
+        // procuramos saldo atual do cliente
+        String sqlSaldo = "SELECT saldo FROM CARTEIRA WHERE id_carteira = ?";
+        PreparedStatement psSaldo = conn.prepareStatement(sqlSaldo);
+        psSaldo.setInt(1, idCartLogada);
+        ResultSet rsSaldo = psSaldo.executeQuery();
+        if (rsSaldo.next()) {
+            saldoAtual = rsSaldo.getDouble("saldo");
+        }
+        rsSaldo.close();
+        psSaldo.close();
+    }
 %>
 
 <%-- alerta de encomenda submetida para o funcionário/admin validar --%>
@@ -37,25 +57,18 @@
         </thead>
         <tbody>
         <%
-            int idUser = (int) session.getAttribute("idUtilizador"); //id do utilizador logado
-            double totalACalcular = 0; //valor total da encomenda
-            int idDaEncomenda = 0; //vai receber o id da encomenda se houver
-
             if (conn != null) {
-                // procuramos os produtos da encomenda que ainda não foram pagos(estado 0) do utilizador
-                String sql = "SELECT i.id_item, i.preco_unitario, p.nome, e.id_encomenda " +
-                        "FROM ITEM_ENCOMENDA i, ENCOMENDA e, PRODUTO p, UTILIZADOR u " +
+                // SQL para listar itens no carrinho (Estado 0)
+                String sqlItems = "SELECT i.id_item, i.preco_unitario, p.nome, e.id_encomenda " +
+                        "FROM ITEM_ENCOMENDA i, ENCOMENDA e, PRODUTO p " +
                         "WHERE i.id_encomenda = e.id_encomenda " +
                         "AND i.id_produto = p.id_produto " +
-                        "AND e.id_utilizador = u.id_utilizador " +
-                        "AND e.estado = 0 " +
-                        "AND u.id_utilizador = ?";
+                        "AND e.estado = 0 AND e.id_utilizador = ?";
 
-                PreparedStatement statement = conn.prepareStatement(sql);
+                PreparedStatement statement = conn.prepareStatement(sqlItems);
                 statement.setInt(1, idUser);
                 ResultSet result = statement.executeQuery();
 
-                // Se não houver produtos, a tabela ficará vazia, se não, guardamos o id da encomenda e acumulamos o preço dos produtos
                 while (result.next()) {
                     idDaEncomenda = result.getInt("id_encomenda");
                     double preco = result.getDouble("preco_unitario");
@@ -71,20 +84,40 @@
         </tr>
         <%
                 }
+                result.close();
+                statement.close();
             }
         %>
         </tbody>
     </table>
 
-    <div class="row mt-4">
+    <div class="row mt-4 align-items-center">
         <div class="col-md-6">
             <a href="pagina_principal.jsp" class="btn btn-outline-secondary">← Continuar a Comprar</a>
+            <div class="mt-2 text-muted">
+                O teu saldo disponível: <strong><%= saldoAtual %>€</strong>
+            </div>
         </div>
+
         <div class="col-md-6 text-end">
             <% if (totalACalcular > 0) { %>
-            <h4>Total a pagar: <span class="text-success"><%= totalACalcular %>€</span></h4>
-            <%-- envia o ID da encomenda para a página de preparação --%>
-            <a href="preparar_encomenda.jsp?id_enc=<%= idDaEncomenda %>" class="btn btn-success btn-lg shadow-sm">Encomendar</a>
+            <h4>Total: <span class="text-success"><%= totalACalcular %>€</span></h4>
+
+            <% if (saldoAtual >= totalACalcular) { %>
+            <%-- se tem saldo suficiente--%>
+            <a href="preparar_encomenda.jsp?id_enc=<%= idDaEncomenda %>" class="btn btn-success btn-lg shadow-sm">
+                Confirmar Encomenda
+            </a>
+            <% } else { %>
+            <%-- se não tem saldo suficiente, botão bloqueado  --%>
+            <div class="text-danger mb-2 fw-bold">
+                Saldo insuficiente! Faltam <%= (totalACalcular - saldoAtual) %>€
+            </div>
+            <button class="btn btn-secondary btn-lg shadow-sm" disabled title="Não tens saldo suficiente">
+                Encomendar
+            </button>
+            <% } %>
+
             <% } else { %>
             <p class="text-muted">O carrinho está vazio.</p>
             <% } %>
