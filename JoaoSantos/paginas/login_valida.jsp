@@ -8,8 +8,11 @@
     String pass = request.getParameter("password");
 
     try {
-        if (conn != null) {
-            String sql = "SELECT * FROM UTILIZADOR WHERE username = ? AND password = MD5(?)";
+        if (conn != null) { //vamos procurar os dados do utilizador e tambem da carteira
+            String sql = "SELECT u.*, c.*" +
+                    "FROM UTILIZADOR u " +
+                    "LEFT JOIN carteira c ON u.id_utilizador = c.id_utilizador " +
+                    "WHERE u.username = ? AND u.password = MD5(?)";
 
             //Ao usar setString(), a base de dados é forçada a tratar o conteúdo destas variáveis estritamente como texto normal, nunca como código SQL executável.
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -20,17 +23,22 @@
 
             // verifica se a base de dados devolveu algum registo (se o username existe e a password está correta)
             if (result.next()) {
+                String username = result.getString("username");
+                int id_utilizador = result.getInt("id_utilizador");
                 int tipoContaId = result.getInt("tipoContaId");
                 int validation = result.getInt("validation");
-                int id_utilizador = result.getInt("id_utilizador");
+                int id_carteira = result.getInt("id_carteira");
+                int tipo_carteiraId = result.getInt("tipoCarteiraId");
 
                 // validation == 1 significa que a conta está aprovada/ativa
                 if (validation == 1) {
                     // Cria as variáveis de sessão
-                    session.setAttribute("idUtilizador", result.getInt("id_utilizador"));
-                    session.setAttribute("utilizador", result.getString("username"));
+                    session.setAttribute("utilizador", username);
+                    session.setAttribute("idUtilizador", id_utilizador);
                     session.setAttribute("TipoConta", tipoContaId);
                     session.setAttribute("autenticado", true);
+                    session.setAttribute("idCarteira", id_carteira);
+                    session.setAttribute("tipoCarteiraId", tipo_carteiraId);
 
                     // reencaminha com base no tipo de conta
                     if (tipoContaId == 1) {

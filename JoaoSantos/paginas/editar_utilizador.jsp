@@ -2,6 +2,15 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     // id recebido ao clicar em editar utilizador
     String idUser = request.getParameter("id");
 
@@ -83,7 +92,7 @@
                     <input type="password" name="password" class="form-control form-control-lg" placeholder="deixe vazio se não quiser mudar">
                 </div>
                 <%-- so mostra o menu para mudar de tipoConta de user se for admin --%>
-                <% if (session.getAttribute("TipoConta").toString().equals("1")) { %>
+                <% if (tipoConta.toString().equals("1")) { %>
                 <div class="mb-4">
                     <label class="form-label fw-bold small">Tipo de Conta</label>
                     <select name="tipoContaID" class="form-select" required>

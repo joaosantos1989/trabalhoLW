@@ -2,6 +2,18 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     String idEncRecebido = request.getParameter("id_enc"); //recebe o id da encomenda
     if (idEncRecebido != null && conn != null) {
         int idEnc = Integer.parseInt(idEncRecebido);
@@ -68,9 +80,10 @@
 
 
                     // (1 = Admin, 2 = Funcionário)
-                    int tipoConta = (int) session.getAttribute("TipoConta");
+                    int tipoContaId = (int)tipoConta;
 
-                    if (tipoConta == 1) {
+                    if (tipoContaId == 1) {
+
                         // volta para a página de admin
                         response.sendRedirect("pagina_admin.jsp?secao=encomendas&msg=sucesso");
                     } else {

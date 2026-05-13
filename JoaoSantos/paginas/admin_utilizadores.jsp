@@ -1,6 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 
+<%
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
 <!-- logica dos botões de controlo -->
 <div class="bg-white p-4 rounded shadow-sm border">
     <%

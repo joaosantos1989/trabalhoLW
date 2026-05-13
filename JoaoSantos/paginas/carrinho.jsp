@@ -8,7 +8,7 @@
     Object tipoConta = session.getAttribute("TipoConta");
 
     if (autenticado == null || tipoConta == null) {
-        // Se não for utilizador, expulsa para o login
+        // expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
     }

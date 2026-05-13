@@ -1,6 +1,6 @@
 -- Criação da Base de Dados
-CREATE DATABASE IF NOT EXISTS felix_uber_shop;
-USE felix_uber_shop;
+CREATE DATABASE IF NOT EXISTS felix_uber_shop_20240304;
+USE felix_uber_shop_20240304;
 
 
 -- Tabela UTILIZADOR

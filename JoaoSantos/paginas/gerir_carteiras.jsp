@@ -2,6 +2,15 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     if ("gestao_carteira".equals(secao)) { //formulário para adicionar ou retirar dinheiro
 %>
 <%@ include file="gestao_carteira.jsp" %>

@@ -39,7 +39,9 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container px-4">
-        <a class="navbar-brand fw-bold text-success" href="pagina_principal.jsp">FelixUberShop</a>
+        <a class="navbar-brand fw-bold text-success" href="pagina_principal.jsp">
+            <i class="bi-shop me-2"></i>FelixUberShop
+        </a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <%
@@ -95,10 +97,11 @@
     </div>
 </nav>
 
-<header class="bg-success py-5">
+<header class="bg-success py-5 shadow-sm">
     <div class="container px-4 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">FelixUberShop</h1>
+            <h1 class="display-4 fw-bolder mb-2">FelixUberShop</h1>
+            <p class="lead fw-normal text-white-50 mb-0">A sua mercearia online favorita!</p>
         </div>
     </div>
 </header>

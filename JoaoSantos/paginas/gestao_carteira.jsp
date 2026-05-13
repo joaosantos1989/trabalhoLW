@@ -2,9 +2,19 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     // dados da sessão
     int idLogado = (int) session.getAttribute("idUtilizador");
-    int tipoLogado = (int) session.getAttribute("TipoConta");
+    int tipoLogado = (int) tipoConta;
+    int idCartLogada = (int) session.getAttribute("idCarteira");
 
     // id recebidos do utilizador a gerir
     String idUserGerir = request.getParameter("id");
@@ -43,8 +53,8 @@
 
         double valor = Double.parseDouble(request.getParameter("valor"));
         String operacao = request.getParameter("operacao");
-
         double valorFinal = 0;
+
         if (operacao.equals("retirar")) {
             valorFinal = -valor; // transforma em negativo para subtrair
         } else {
@@ -69,8 +79,16 @@
             registaMov.setInt(2, 2); // retirar
         }
 
-        registaMov.setInt(3, idLogado); // Quem fez a alteração
-        registaMov.setInt(4, Integer.parseInt(idCartGerir)); // A carteira que recebeu
+        // se o Admin/Loja não tiver carteira (idCartLogada == 0),
+        // usamos a própria carteira que está a receber o dinheiro como origem.
+        int origemFinal = idCartLogada;
+        if (origemFinal == 0) {
+            origemFinal = Integer.parseInt(idCartGerir.trim());
+        }
+
+        // USAR IDs DE CARTEIRAS
+        registaMov.setInt(3, origemFinal); // Origem: ID da carteira de quem está logado
+        registaMov.setInt(4, Integer.parseInt(idCartGerir.trim())); // Destino: ID da carteira gerida
         registaMov.executeUpdate();
 
         // Enviar de volta com mensagem de sucesso

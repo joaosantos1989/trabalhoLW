@@ -2,6 +2,15 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     // nome do utilizador na barra de pesquisa
     String pesquisa = request.getParameter("txtPesquisa");
 %>

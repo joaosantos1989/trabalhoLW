@@ -2,6 +2,18 @@
 <%@ include file="../basedados/basedados.h" %>
 
 <%
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     String idEncomenda = request.getParameter("id_enc"); //recebe o id da encomenda a validar
 
     if (idEncomenda != null && conn != null) {

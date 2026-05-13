@@ -1,5 +1,5 @@
 -- Selecionar a base de dados
-USE felix_uber_shop;
+USE felix_uber_shop_20240304;
 
 -- Desativar chaves forasteiras
 SET FOREIGN_KEY_CHECKS = 0;
@@ -17,4 +17,4 @@ DROP TABLE IF EXISTS UTILIZADOR;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Eliminar a base de dados
-DROP DATABASE IF EXISTS felix_uber_shop;
+DROP DATABASE IF EXISTS felix_uber_shop_20240304;

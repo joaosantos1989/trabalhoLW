@@ -3,6 +3,18 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+    Object autenticado = session.getAttribute("autenticado");
+    Object tipoConta = session.getAttribute("TipoConta");
+
+    if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     //dados da sessão e do link
     int idUser = (int) session.getAttribute("idUtilizador");
     String idProd = request.getParameter("id");

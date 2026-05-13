@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.sql.*" %>
 <%
-    String url = "jdbc:mysql://localhost:3306/felix_uber_shop";
+    String url = "jdbc:mysql://localhost:3306/felix_uber_shop_20240304";
     String user = "root"; 
     String password = ""; 
 

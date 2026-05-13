@@ -2,8 +2,17 @@
 <%@ page import="java.sql.*" %>
 
 <%
+    // --- segurança de login ---
+   if (autenticado == null || tipoConta == null) {
+        // expulsa para o login
+        response.sendRedirect("login.jsp?needLogin=acesso_negado");
+        return; // Interrompe a página
+    }
+%>
+
+<%
     // identificar quem está logado
-    int tipoUser = Integer.parseInt(session.getAttribute("TipoConta").toString());
+    int tipoUser = Integer.parseInt(tipoConta.toString());
     int idLogado = Integer.parseInt(session.getAttribute("idUtilizador").toString());
 %>
 <%-- alerta de encomenda submetida para o funcionário validar --%>
