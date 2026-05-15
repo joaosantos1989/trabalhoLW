@@ -88,7 +88,7 @@
                 <% if (tipoUser == 3) {
                     if (estado == 1) { // Só edita/cancela se estiver pendente %>
                         <a href="cancelar_encomenda.jsp?id_enc=<%= idEnc %>" class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Deseja cancelar esta encomenda?')">Remover</a>
+                           onclick="return confirm('Deseja cancelar esta encomenda?')">Cancelar</a>
                 <% } %>
 
                 <% } else { %>

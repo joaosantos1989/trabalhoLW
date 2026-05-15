@@ -107,19 +107,27 @@ VALUES ('Chocolate Nilka', 'O Chocolate Nilka 30g é um chocolate de leite, prá
 INSERT INTO PRODUTO (nome, descricao, preco)
 VALUES ('Agua Vital', 'Água sem Gás Alcalina - pH 9.5 - 1.5L', 1.50);
 
--- 3. produto 'Next Cereais'
+-- 3. produto 'Rock-Cola'
+INSERT INTO PRODUTO (nome, descricao, preco)
+VALUES ('Rock-Cola', 'Refrigerante com gás - 1L', 1.80);
+
+-- 4. produto 'Bolachas Marilia'
+INSERT INTO PRODUTO (nome, descricao, preco)
+VALUES ('Bolachas Marilia', 'Bolachas deliciosas de cereais e frutas.', 1.20);
+
+-- 4. produto 'Next Cereais'
 INSERT INTO PRODUTO (nome, descricao, preco)
 VALUES ('Next Cereais', 'Cereais Integrais para preparar com leite, para um pequeno-almoço muito saboroso.', 2.80);
 
--- 4. produto 'Banana'
+-- 5. produto 'Banana'
 INSERT INTO PRODUTO (nome, descricao, preco)
 VALUES ('Banana', 'Banana - 1kg.', 1.60);
 
--- 5. produto 'Cebola'
+-- 6. produto 'Cebola'
 INSERT INTO PRODUTO (nome, descricao, preco)
 VALUES ('Cebola', 'BCebola Nova - 150g', 0.50);
 
--- 6. produto 'Tomate'
+-- 7. produto 'Tomate'
 INSERT INTO PRODUTO (nome, descricao, preco)
 VALUES ('Tomate', 'Tomate Cherry - 100g', 1.50);
 
