@@ -45,7 +45,8 @@
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efetuado com sucesso!</h1>");
                         response.setHeader("Refresh", "1; URL=pagina_principal.jsp");
 
-                    } else if (tipoContaId == 2) {
+                    }
+                    else if (tipoContaId == 2) {
                         session.setAttribute("user", "Funcionario");
                         out.println("<h1 style='color:green; text-align:center; margin-top:50px;'>Login efectuado com sucesso!</h1>");
                         response.setHeader("Refresh", "1; URL=pagina_principal.jsp");
@@ -58,7 +59,7 @@
                 }
                 // validation == 2 significa que a conta está por aprovar
                 else if (validation == 2) {
-                    out.println("<h1 style='color:orange; text-align:center; margin-top:50px;'>Utilizador registado, deve aguardar por confirmação do admin.</h1>");
+                    out.println("<h1 style='color:orange; text-align:center; margin-top:50px;'>Conta de utilizador desativada, deve aguardar validação do administrador!</h1>");
                     response.setHeader("Refresh", "3; URL=pagina_principal.jsp");
                 }
 
