@@ -1,16 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
 
-<% if ("n".equals(request.getParameter("needLogin"))) { %>
-<div class="container mt-2">
-    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-         Precisa de estar logado primeiro para adicionar produtos ao carrinho!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</div>
-<% } %>
-
-<!-- tipo de utilizador errado -->
+<!-- alerta tipo de utilizador errado -->
 <% if ("acesso_negado".equals(request.getParameter("needLogin"))) { %>
 <div class="container mt-2">
     <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">

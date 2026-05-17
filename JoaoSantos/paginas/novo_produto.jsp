@@ -3,14 +3,14 @@
 
 <%
     // --- segurança de login ---
-    if (autenticado == null || tipoConta == null) {
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
         // expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
     }
 %>
 
-<%
+<% // adiciona à bd o novo produto
     if (request.getMethod().equalsIgnoreCase("POST")) {
         String nome = request.getParameter("nome");
         String desc = request.getParameter("descricao");
@@ -26,7 +26,7 @@
         response.sendRedirect("pagina_admin.jsp?secao=produtos&msg=adicionado");
     }
 %>
-
+<!-- formulario -->
 <div class="container mt-2 mb-5">
     <div class="row justify-content-center">
         <div class="col-11 col-sm-10 col-md-8 col-lg-6">

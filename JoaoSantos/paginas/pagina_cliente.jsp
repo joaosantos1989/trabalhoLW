@@ -41,17 +41,17 @@
         <%
             if ("encomendas".equals(secao)) {
         %>
-        <%@ include file="gestao_encomendas.jsp" %>
+        <%@ include file="gestao_encomendas.jsp" %> <%-- painel de gestão das encomendas --%>
 
         <%
         } else if ("carteira".equals(secao)) {
         %>
-        <%@ include file="gestao_carteira.jsp" %>
+        <%@ include file="gestao_carteira.jsp" %> <%-- painel de egstão da carteira --%>
 
         <%
         } else if ("editar_utilizador".equals(secao)) {
         %>
-        <%@ include file="editar_utilizador.jsp" %>
+        <%@ include file="editar_utilizador.jsp" %> <%-- painel para gerir os dados pessoais --%>
 
         <%
         } else { //default

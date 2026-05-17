@@ -3,7 +3,7 @@
 
 <%
     // --- segurança de login ---
-    if (autenticado == null || tipoConta == null) {
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
         // expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
@@ -91,7 +91,7 @@
         </thead>
         <tbody>
         <%
-            if (conn != null) {
+            if (conn != null) { //procuramos os produtos pelo tipo de ordem
                 String ordem = request.getParameter("ordem");
                 String sqlSelect = "SELECT * FROM PRODUTO ORDER BY nome ASC";
 

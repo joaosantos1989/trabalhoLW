@@ -61,12 +61,10 @@
         <tbody>
         <% //selecionamos as encomendas pendentes(estado 1)
             String sql;
-            // Admin/Func (1 e 2) vêem tudo o que está pendente (estado 1)
-            // Cliente (3) vê apenas as suas encomendas
-            if (tipoUser == 3) {
+            if (tipoUser == 3) { //cliente so ve as encomendas dele
                 sql = "SELECT e.*, u.username FROM ENCOMENDA e JOIN UTILIZADOR u ON e.id_utilizador = u.id_utilizador " +
                         "WHERE e.id_utilizador = " + idLogado + " ORDER BY e.data_hora DESC";
-            } else {
+            } else { //admin/funcinario veem todas as encomendas pendentes(estado=1)
                 sql = "SELECT e.*, u.username FROM ENCOMENDA e JOIN UTILIZADOR u ON e.id_utilizador = u.id_utilizador " +
                         "WHERE e.estado = 1 ORDER BY e.data_hora ASC";
             }
@@ -79,7 +77,7 @@
         %>
         <tr>
             <td><strong>#<%= idEnc %></strong></td>
-            <% if (tipoUser != 3) { %> <td><%= result.getString("username") %></td> <% } %>
+            <% if (tipoUser != 3) { %> <td><%= result.getString("username") %></td> <% } %><!-- o cliente não precisa de ver o seu nome nas suas encomendas -->
             <td><%= result.getDate("data_hora") %></td>
             <td class="text-success fw-bold"><%= result.getDouble("valor_total") %>€</td>
             <td class="text-center">

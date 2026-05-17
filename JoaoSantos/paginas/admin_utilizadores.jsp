@@ -2,8 +2,8 @@
 <%@ page import="java.sql.*" %>
 
 <%
-    // --- segurança de login --- (Mantida)
-    if (autenticado == null || tipoConta == null) {
+    // --- segurança de login ---
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return;
     }

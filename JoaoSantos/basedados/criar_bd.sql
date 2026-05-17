@@ -54,7 +54,7 @@ CREATE TABLE MOVIMENTO_CARTEIRA (
     id_movimento INT(11) AUTO_INCREMENT PRIMARY KEY,
     data_hora DATE NOT NULL,
     valor DECIMAL(10, 2) NOT NULL,
-    tipoOperacaoId INT(11) NOT NULL, -- 1 = adicionar saldo, 2 = retirar saldo, 3 = pagar encomenda;
+    tipoOperacaoId INT(11) NOT NULL, -- 1 = adicionar saldo, 2 = retirar saldo, 3 = pagar encomenda, 4 = encomenda cancelada;
     id_carteira_origem INT(11) NOT NULL, -- chave forasteira
     id_carteira_destino INT(11) NOT NULL, -- chave forasteira
 

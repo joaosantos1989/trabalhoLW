@@ -3,7 +3,7 @@
 
 <%
     // --- segurança de login ---
-    if (autenticado == null || tipoConta == null) {
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 2 && (int) tipoConta != 1) {
         // expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página

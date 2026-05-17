@@ -3,7 +3,7 @@
 
 <%
     // --- segurança de login ---
-    if (autenticado == null || tipoConta == null) {
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1) {
         // expulsa para o login
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return; // Interrompe a página
@@ -11,7 +11,7 @@
 %>
 
 <%
-    String idProd = request.getParameter("id");
+    String idProd = request.getParameter("id"); //id do produto a editar
 
     if (request.getMethod().equalsIgnoreCase("POST")) {
         String nome = request.getParameter("nome");

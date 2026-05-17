@@ -6,14 +6,14 @@
     Object autenticado = session.getAttribute("autenticado");
     Object tipoConta = session.getAttribute("TipoConta");
 
-    if (autenticado == null || tipoConta == null) {
+    if (autenticado == null || tipoConta == null || (int) tipoConta != 1 && (int) tipoConta != 2) {
         response.sendRedirect("login.jsp?needLogin=acesso_negado");
         return;
     }
 
     // --- pagina de utilizador a voltar  ---
     int tipoLogado = (int)tipoConta;
-    String pagVolta = (tipoLogado == 1) ? "pagina_admin.jsp?secao=encomendas" : (tipoLogado == 2) ? "pagina_funcionario.jsp?secao=encomendas" : "pagina_cliente.jsp?secao=encomendas";
+    String pagVolta = (tipoLogado == 1) ? "pagina_admin.jsp?secao=encomendas" : "pagina_funcionario.jsp?secao=encomendas";
 
     String idEncRecebido = request.getParameter("id_enc");
 
