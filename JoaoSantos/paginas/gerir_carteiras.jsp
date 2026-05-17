@@ -56,8 +56,13 @@
             <td><strong><%= resultSaldo.getString("username") %></strong></td>
             <td class="text-success fw-bold"><%= resultSaldo.getDouble("saldo") %>€</td>
             <td class="text-center"> <!-- envia id do utilizador e id carteira -->
+                <%if((int)tipoConta == 1){ %>
+                <a href="pagina_admin.jsp?secao=gestao_carteira&id=<%= resultSaldo.getInt("id_utilizador") %>&id_cart=<%= resultSaldo.getInt("id_carteira") %>"
+                   class="btn btn-sm btn-outline-primary">⚙️ Gerir</a>
+                <% } else { %>
                 <a href="pagina_funcionario.jsp?secao=gestao_carteira&id=<%= resultSaldo.getInt("id_utilizador") %>&id_cart=<%= resultSaldo.getInt("id_carteira") %>"
                    class="btn btn-sm btn-outline-primary">⚙️ Gerir</a>
+                <% } %>
             </td>
         </tr>
         <%

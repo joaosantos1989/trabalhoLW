@@ -101,7 +101,7 @@
 
         <div class="col-md-6 text-end">
             <% if (totalACalcular > 0) { %>
-            <h4>Total: <span class="text-success"><%= totalACalcular %>€</span></h4>
+            <h4>Total: <span class="text-success"><%= totalACalcular %>€</span></h4> <%-- mostra o saldo atual --%>
 
             <% if (saldoAtual >= totalACalcular) { %>
             <%-- se tem saldo suficiente--%>
